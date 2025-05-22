@@ -1,0 +1,66 @@
+{% extends 'financas/base.html' %}
+
+{% block title %}Transações{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1>Transações</h1>
+        <a href="{% url 'adicionar_transacao' %}" class="btn btn-primary">
+            <i class="fas fa-plus-circle me-1"></i> Adicionar Transação
+        </a>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Data</th>
+                    <th>Descrição</th>
+                    <th>Valor</th>
+                    <th>Categoria</th>
+                    <th>Tipo</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for transacao in page_obj %}
+                <tr>
+                    <td>{{ transacao.data }}</td>
+                    <td>{{ transacao.descricao }}</td>
+                    <td>R$ {{ transacao.valor|floatformat:2 }}</td>
+                    <td>{{ transacao.categoria }}</td>
+                    <td>{{ transacao.tipo }}</td>
+                    <td>
+                        <a href="{% url 'editar_transacao' transacao.pk %}" class="btn btn-sm btn-warning mb-1">Editar</a>
+                        <a href="{% url 'deletar_transacao' transacao.pk %}" class="btn btn-sm btn-danger">Excluir</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="6">Nenhuma transação encontrada.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <nav>
+      <ul class="pagination">
+        {% if page_obj.has_previous %}
+          <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Anterior</a></li>
+        {% else %}
+          <li class="page-item disabled"><span class="page-link">Anterior</span></li>
+        {% endif %}
+
+        <li class="page-item active"><span class="page-link">{{ page_obj.number }}</span></li>
+
+        {% if page_obj.has_next %}
+          <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Próximo</a></li>
+        {% else %}
+          <li class="page-item disabled"><span class="page-link">Próximo</span></li>
+        {% endif %}
+      </ul>
+    </nav>
+
+</div>
+{% endblock %}

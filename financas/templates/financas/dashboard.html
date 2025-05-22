@@ -1,0 +1,704 @@
+{% extends 'financas/base.html' %}
+
+{% load static %}
+{% load i18n %}
+
+{% block title %}Dashboard Financeiro - EcoSaldo{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --primary-color: #28a745;
+        --primary-light: #e8f5e9;
+        --secondary-color: #6c757d;
+        --secondary-light: #e9ecef;
+        --info-color: #17a2b8;
+        --danger-color: #dc3545;
+        --warning-color: #ffc107;
+        --text-color: #212529;
+        --text-muted: #6c757d;
+        --border-color: #dee2e6;
+        --shadow-color: rgba(0, 0, 0, 0.08);
+    }
+
+    body {
+        background-color: var(--secondary-light, #e9ecef);
+        color: var(--text-color, #212529);
+    }
+
+    .dashboard-header {
+        margin-top: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid var(--border-color, #dee2e6);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .dashboard-header h1 {
+        font-size: 1.8rem;
+        font-weight: 600;
+        color: var(--text-color);
+        margin-bottom: 0;
+    }
+    .dashboard-header h1 i {
+        color: var(--primary-color, #28a745);
+        opacity: 0.8;
+    }
+
+    .summary-card {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 5px 15px var(--shadow-color);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        overflow: hidden;
+        height: 100%;
+        color: white;
+    }
+
+    .summary-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+    }
+
+    .summary-card .card-header {
+        padding: 0.75rem 1.25rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid rgba(255,255,255,.2);
+        color: white;
+    }
+    .summary-card .card-header span {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .summary-card .card-header h5 {
+        margin-bottom: 0;
+        font-size: 1.1rem;
+    }
+
+    .summary-card .card-body {
+        padding: 1.25rem;
+        background-color: transparent;
+        color: white;
+    }
+
+    .summary-card.bg-primary {
+        background-color: var(--primary-color);
+    }
+    .summary-card.bg-success {
+        background-color: #198754; /* verde bootstrap */
+    }
+    .summary-card.bg-danger {
+        background-color: var(--danger-color);
+    }
+
+    .summary-status {
+        font-size: 0.9rem;
+        color: white;
+        display: flex;
+        align-items: center;
+        margin-bottom: 0;
+        gap: 0.25rem;
+    }
+    .summary-status.text-success { color: #d4edda; }
+    .summary-status.text-danger { color: #f8d7da; }
+    .summary-status.text-muted { color: #e2e3e5; }
+
+    .period-selector .btn-group {
+        border-radius: 50px;
+        overflow: hidden;
+    }
+    .period-selector .btn {
+        font-weight: 500;
+        padding: 0.375rem 1rem;
+        font-size: 0.9rem;
+        border: 1px solid var(--secondary-color);
+        color: var(--secondary-color);
+        background-color: white;
+        transition: all 0.3s ease;
+        border-radius: 0;
+    }
+    .period-selector .btn-group > .btn:first-child { border-top-left-radius: 50px; border-bottom-left-radius: 50px; }
+    .period-selector .btn-group > .btn:last-child { border-top-right-radius: 50px; border-bottom-right-radius: 50px; }
+
+    .period-selector .btn-outline-secondary.active {
+        background-color: var(--secondary-color);
+        color: white;
+        border-color: var(--secondary-color);
+        box-shadow: none;
+    }
+    .period-selector .btn:hover, .period-selector .btn:focus {
+        background-color: var(--secondary-light);
+        color: var(--text-color);
+        border-color: var(--secondary-color);
+        z-index: 1;
+    }
+
+    .chart-container {
+        position: relative;
+        height: 300px;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .chart-container canvas {
+        max-width: 100%;
+        max-height: 100%;
+    }
+    .chart-no-data-message {
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background-color: var(--secondary-light);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 1rem;
+        color: var(--text-muted);
+        z-index: 10;
+    }
+    .chart-no-data-message i {
+        margin-right: 0.5rem;
+    }
+
+    .card .table {
+        margin-bottom: 0;
+    }
+    .card .table th {
+        font-weight: 600;
+        background-color: var(--secondary-light);
+        border-bottom: 1px solid var(--border-color, #dee2e6);
+        vertical-align: middle;
+    }
+    .card .table td {
+        vertical-align: middle;
+        padding: 0.75rem 1rem;
+    }
+    .category-expenses-table .badge {
+        min-width: 12px; min-height: 12px;
+        display: inline-block;
+        flex-shrink: 0;
+        border: 1px solid rgba(0,0,0,0.1);
+    }
+    .category-expenses-table .d-flex.align-items-center {
+        gap: 0.5rem;
+    }
+    .recent-transactions-table .badge {
+        font-weight: 400;
+        padding: 0.3em 0.6em;
+        border-radius: 4px;
+        border: 1px solid var(--border-color, #dee2e6);
+    }
+    .recent-transactions-table .btn-group-sm .btn {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.875rem;
+    }
+
+    .alert-list .list-group-item {
+        border-left: 4px solid transparent;
+        transition: border-color 0.3s ease;
+        padding: 1rem 1.25rem;
+    }
+    .alert-list .list-group-item h6 {
+        font-size: 1rem;
+        font-weight: 600;
+    }
+    .alert-list .list-group-item p {
+        font-size: 0.85rem;
+        margin-bottom: 0;
+    }
+    .alert-list .list-group-item .badge.bg-warning ~ div { border-left-color: var(--warning-color); }
+    .alert-list .list-group-item .badge.bg-info ~ div { border-left-color: var(--info-color); }
+    .alert-list .list-group-item .badge.bg-success ~ div { border-left-color: var(--primary-color); }
+
+    @media (max-width: 992px) {
+        .col-lg-8, .col-lg-4, .col-lg-6 {
+            margin-bottom: 1.5rem;
+        }
+    }
+    @media (max-width: 768px) {
+        .dashboard-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+        .dashboard-header .period-selector,
+        .dashboard-header .btn-group {
+            width: 100%;
+        }
+        .dashboard-header .btn {
+            flex-grow: 1;
+            text-align: center;
+        }
+        .card-body { padding: 1rem; }
+        .summary-card .card-body h2 { font-size: 1.6rem; }
+        .summary-status { font-size: 0.8rem; }
+        .chart-container { height: 200px; }
+        .card .table td { padding: 0.5rem 0.75rem; }
+    }
+    @media (max-width: 576px) {
+        .summary-card .card-body h2 { font-size: 1.4rem; }
+        .summary-status { font-size: 0.75rem; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="dashboard-header mb-4">
+        <h1><i class="fas fa-chart-line me-3 opacity-75"></i>Dashboard Financeiro</h1>
+        <div class="period-selector" role="group" aria-label="Filtrar por período">
+            <div class="btn-group">
+                <button type="button" class="btn btn-outline-secondary {% if period == 'month' %}active{% endif %}" data-period="month">Mês Atual</button>
+                <button type="button" class="btn btn-outline-secondary {% if period == 'quarter' %}active{% endif %}" data-period="quarter">Trimestre</button>
+                <button type="button" class="btn btn-outline-secondary {% if period == 'year' %}active{% endif %}" data-period="year">Ano</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-4 mb-4">
+            <div class="card summary-card bg-primary">
+                <div class="card-header">
+                    <span><i class="fas fa-wallet me-2"></i> Saldo Total</span>
+                </div>
+                <div class="card-body">
+                    <h2 class="card-title mb-1">R$ {{ saldo|floatformat:2|default:"0.00" }}</h2>
+                    {% if saldo > 0 %}
+                        <p class="summary-status text-success"><i class="fas fa-arrow-up"></i> Positivo</p>
+                    {% elif saldo < 0 %}
+                        <p class="summary-status text-danger"><i class="fas fa-arrow-down"></i> Negativo</p>
+                    {% else %}
+                        <p class="summary-status text-muted"><i class="fas fa-equals"></i> Saldo zero</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="card summary-card bg-success">
+                <div class="card-header">
+                    <span><i class="fas fa-arrow-down me-2"></i> Receitas</span>
+                </div>
+                <div class="card-body">
+                    <h2 class="card-title mb-1">R$ {{ receitas|floatformat:2|default:"0.00" }}</h2>
+                    <div class="progress mt-3" style="height: 8px;">
+                        <div class="progress-bar bg-light" role="progressbar" style="width: {{ receitas_percentual|default:0 }}%" aria-valuenow="{{ receitas_percentual|default:0 }}" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                    <p class="summary-status text-light mt-2"><i class="fas fa-exchange-alt"></i> {{ receitas_count }} transações no período</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="card summary-card bg-danger">
+                <div class="card-header">
+                    <span><i class="fas fa-arrow-up me-2"></i> Despesas</span>
+                </div>
+                <div class="card-body">
+                    <h2 class="card-title mb-1">R$ {{ despesas|floatformat:2|default:"0.00" }}</h2>
+                    <div class="progress mt-3" style="height: 8px;">
+                        <div class="progress-bar bg-light" role="progressbar" style="width: {{ despesas_percentual|default:0 }}%" aria-valuenow="{{ despesas_percentual|default:0 }}" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                    <p class="summary-status text-light mt-2"><i class="fas fa-exchange-alt"></i> {{ despesas_count }} transações no período</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gráfico comparativo Mês Atual x Mês Anterior -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-bottom d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="fas fa-chart-bar me-2 text-primary"></i>Comparativo Mês Atual x Mês Anterior</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="comparativoChart" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-lg-8 mb-4 mb-lg-0">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-bottom d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="fas fa-chart-line me-2 text-primary"></i>Fluxo Mensal (Últimos 12 Meses)</h5>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container">
+                        <canvas id="monthlyFlowChart"></canvas>
+                        {% if not chart_flow_labels %}
+                            <div class="chart-no-data-message">
+                                <p class="text-muted mb-0"><i class="fas fa-info-circle me-2"></i>Não há dados de transações suficientes nos últimos 12 meses para o gráfico de fluxo.</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm h-100 alert-list">
+                <div class="card-header bg-white border-bottom">
+                    <h5 class="mb-0"><i class="fas fa-bell me-2 text-warning"></i>Alertas</h5>
+                </div>
+                <div class="card-body p-0">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="mb-1">Limite de gastos</h6>
+                                <p class="small text-muted mb-0">Você atingiu 85% do seu limite mensal</p>
+                            </div>
+                            <span class="badge bg-warning rounded-pill">Atenção</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="mb-1">Assinatura renovando</h6>
+                                <p class="small text-muted mb-0">Netflix em 3 dias - R$ 39,90</p>
+                            </div>
+                            <span class="badge bg-info rounded-pill">Aviso</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="mb-1">Meta alcançada</h6>
+                                <p class="small text-muted mb-0">Você economizou 100% da meta deste mês</p>
+                            </div>
+                            <span class="badge bg-success rounded-pill">Sucesso</span>
+                        </li>
+                        <li class="list-group-item text-center text-muted py-4">Nenhum novo alerta.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-lg-6 mb-4 mb-lg-0">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-bottom d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="fas fa-tags me-2 text-success"></i>Despesas por Categoria (Período)</h5>
+                    <a href="{% url 'lista_categorias' %}" class="btn btn-sm btn-outline-primary">Ver todas</a>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0 category-expenses-table">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Categoria</th>
+                                    <th class="text-end">Total (R$)</th>
+                                    <th class="text-end">%</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in despesas_por_categoria %}
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <span class="badge bg-primary rounded-circle me-2" style="width: 12px; height: 12px;"></span>
+                                            {{ item.categoria }}
+                                        </div>
+                                    </td>
+                                    <td class="text-end">R$ {{ item.total|floatformat:2|default:"0.00" }}</td>
+                                    <td class="text-end">{{ item.percentual|floatformat:1|default:"0.0" }}%</td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="3" class="text-center py-4 text-muted">
+                                        Nenhuma despesa registrada neste período
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-bottom d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="fas fa-chart-pie me-2 text-info"></i>Distribuição de Despesas (Período)</h5>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container">
+                        <canvas id="categoryDistributionChart"></canvas>
+                        {% if not chart_despesas_categoria_labels %}
+                        <div class="chart-no-data-message">
+                            <p class="text-muted mb-0"><i class="fas fa-info-circle me-2"></i>Não há dados de despesas neste período para o gráfico de distribuição.</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4 mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-bottom d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="fas fa-exchange-alt me-2 text-secondary"></i>Últimas Transações</h5>
+                    <a href="{% url 'lista_transacoes' %}" class="btn btn-sm btn-outline-primary">Ver todas</a>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0 recent-transactions-table">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Data</th>
+                                    <th>Descrição</th>
+                                    <th>Categoria</th>
+                                    <th class="text-end">Valor (R$)</th>
+                                    <th class="text-end" style="width: 120px;">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for transacao in ultimas_transacoes %}
+                                <tr>
+                                    <td>{{ transacao.data|date:"d/m/Y" }}</td>
+                                    <td>{{ transacao.descricao }}</td>
+                                    <td><span class="badge bg-light text-dark border">{{ transacao.categoria|default:"N/A" }}</span></td>
+                                    <td class="text-end {% if transacao.tipo == 'Despesa' %}text-danger{% else %}text-success{% endif %}">
+                                        R$ {{ transacao.valor|floatformat:2|default:"0.00" }}
+                                    </td>
+                                    <td class="text-end">
+                                        <div class="btn-group btn-group-sm" role="group">
+                                            <a href="{% url 'editar_transacao' transacao.pk %}" class="btn btn-outline-secondary" data-bs-toggle="tooltip" title="Editar">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a href="{% url 'deletar_transacao' transacao.pk %}" class="btn btn-outline-danger" data-bs-toggle="tooltip" title="Excluir" onclick="return confirm('Tem certeza que deseja excluir a transação \'{{ transacao.descricao|escapejs }}\'?');">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="5" class="text-center py-4 text-muted">Nenhuma transação recente registrada</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+
+    const periodButtons = document.querySelectorAll('.period-selector .btn');
+    const currentUrl = new URL(window.location.href);
+
+    periodButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const selectedPeriod = this.dataset.period;
+            currentUrl.searchParams.set('period', selectedPeriod);
+            window.location.href = currentUrl.toString();
+        });
+    });
+
+    function getChartData(scriptId) {
+        const scriptElement = document.getElementById(scriptId);
+        if (scriptElement && scriptElement.textContent) {
+            try {
+                return JSON.parse(scriptElement.textContent);
+            } catch (e) {
+                console.error(`Erro ao parsear JSON do script #${scriptId}:`, e);
+                return null;
+            }
+        }
+        return null;
+    }
+
+    const monthlyFlowLabels = getChartData('monthly-flow-labels');
+    const monthlyFlowReceitas = getChartData('monthly-flow-receitas-data');
+    const monthlyFlowDespesas = getChartData('monthly-flow-despesas-data');
+    const monthlyFlowCanvas = document.getElementById('monthlyFlowChart');
+
+    if (monthlyFlowCanvas && monthlyFlowLabels && monthlyFlowReceitas && monthlyFlowDespesas && monthlyFlowLabels.length > 0) {
+        const noDataMessage = monthlyFlowCanvas.closest('.chart-container').querySelector('.chart-no-data-message');
+        if(noDataMessage) noDataMessage.style.display = 'none';
+
+        new Chart(monthlyFlowCanvas, {
+            type: 'line',
+            data: {
+                labels: monthlyFlowLabels,
+                datasets: [
+                    {
+                        label: 'Receitas',
+                        data: monthlyFlowReceitas,
+                        borderColor: 'rgba(40, 167, 69, 0.8)',
+                        backgroundColor: 'rgba(40, 167, 69, 0.1)',
+                        fill: true,
+                        tension: 0.3,
+                        pointBackgroundColor: '#28a745',
+                        pointBorderColor: '#fff',
+                        pointRadius: 5,
+                        pointHoverRadius: 7
+                    },
+                    {
+                        label: 'Despesas',
+                        data: monthlyFlowDespesas,
+                        borderColor: 'rgba(220, 53, 69, 0.8)',
+                        backgroundColor: 'rgba(220, 53, 69, 0.1)',
+                        fill: true,
+                        tension: 0.3,
+                        pointBackgroundColor: '#dc3545',
+                        pointBorderColor: '#fff',
+                        pointRadius: 5,
+                        pointHoverRadius: 7
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Valor (R$)',
+                            color: '#333',
+                            font: { size: 12, weight: 'bold' }
+                        },
+                        ticks: {
+                            callback: function(value) {
+                                return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
+                            }
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Mês',
+                            color: '#333',
+                            font: { size: 12, weight: 'bold' }
+                        }
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) { label += ': '; }
+                                if (context.raw !== null) {
+                                    label += new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(context.raw);
+                                }
+                                return label;
+                            }
+                        }
+                    },
+                    legend: {
+                        display: true,
+                        position: 'bottom',
+                        labels: {
+                            usePointStyle: true,
+                            padding: 20,
+                            font: { size: 12 }
+                        }
+                    }
+                },
+                hover: { mode: 'nearest', intersect: true },
+                animation: { duration: 1000, easing: 'easeOutQuart' }
+            }
+        });
+    } else {
+        if (monthlyFlowCanvas) monthlyFlowCanvas.style.display = 'none';
+    }
+
+    const categoryDistributionLabels = getChartData('category-distribution-labels');
+    const categoryDistributionData = getChartData('category-distribution-data');
+    const categoryDistributionCanvas = document.getElementById('categoryDistributionChart');
+
+    const chartColors = [
+        '#28a745', '#ffc107', '#17a2b8', '#dc3545', '#6f42c1', '#20c997', '#fd7e14',
+        '#e83e8c', '#6610f2', '#007bff', '#adb5bd', '#343a40', '#198754', '#6c757d',
+        '#0dcaf0', '#ffc107', '#d63384', '#6f42c1'
+    ];
+
+    if (categoryDistributionCanvas && categoryDistributionLabels && categoryDistributionData && categoryDistributionLabels.length > 0) {
+        const noDataMessage = categoryDistributionCanvas.closest('.chart-container').querySelector('.chart-no-data-message');
+        if(noDataMessage) noDataMessage.style.display = 'none';
+
+        new Chart(categoryDistributionCanvas, {
+            type: 'doughnut',
+            data: {
+                labels: categoryDistributionLabels,
+                datasets: [{
+                    data: categoryDistributionData,
+                    backgroundColor: chartColors.slice(0, categoryDistributionLabels.length),
+                    borderColor: '#fff',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        align: 'center',
+                        labels: {
+                            usePointStyle: true,
+                            padding: 15,
+                            font: { size: 12 }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.label || '';
+                                if (label) { label += ': '; }
+                                let value = context.raw;
+                                if (value !== null) {
+                                    label += new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
+                                }
+                                let total = context.dataset.data.reduce((sum, val) => sum + val, 0);
+                                if (total > 0) {
+                                    let percentage = (value / total * 100).toFixed(1);
+                                    label += ` (${percentage}%)`;
+                                } else {
+                                    label += ' (0.0%)';
+                                }
+                                return label;
+                            }
+                        }
+                    },
+                    title: { display: false }
+                },
+                cutout: '70%',
+                animation: { animateScale: true, animateRotate: true }
+            }
+        });
+    } else {
+        if (categoryDistributionCanvas) categoryDistributionCanvas.style.display = 'none';
+    }
+});
+</script>
+{% endblock %}

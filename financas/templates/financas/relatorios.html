@@ -1,0 +1,88 @@
+{% extends 'financas/base.html' %}
+
+{% block title %}Relatórios{% endblock %}
+
+{# AQUI COMEÇA O ÚNICO E CORRETO BLOCO CONTENT #}
+{% block content %}
+{# Adiciona um container para melhor alinhamento e padding em diferentes telas #}
+{# mt-4 adiciona um margin-top (espaço no topo) #}
+<div class="container mt-4">
+
+    <h1>Relatórios Personalizados</h1>
+
+    {# O formulário já usa o grid do Bootstrap, que é responsivo. #}
+    {# As classes col-md-3 farão os campos ficarem lado a lado em telas médias+ e empilharem abaixo disso. #}
+    {# col-sm-6 fará 2 campos por linha em telas pequenas. #}
+    {# g-3 adiciona espaçamento (gutter) entre os itens do grid. #}
+    {# mb-4 adiciona margin-bottom (espaço abaixo do formulário) #}
+    <form method="get" class="row g-3 mb-4">
+        <div class="col-md-3 col-sm-6 col-12">
+            <label for="categoria" class="form-label">Categoria</label>
+            <select name="categoria" id="categoria" class="form-select">
+                <option value="">Todas</option>
+                {% for cat in categorias %}
+                <option value="{{ cat.id }}" {% if filtros.categoria_id == cat.id|stringformat:"s" %}selected{% endif %}>{{ cat.nome }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-3 col-sm-6 col-12">
+            <label for="tipo" class="form-label">Tipo</label>
+            <select name="tipo" id="tipo" class="form-select">
+                <option value="">Todos</option>
+                <option value="Receita" {% if filtros.tipo == 'Receita' %}selected{% endif %}>Receita</option>
+                <option value="Despesa" {% if filtros.tipo == 'Despesa' %}selected{% endif %}>Despesa</option>
+            </select>
+        </div>
+        <div class="col-md-3 col-sm-6 col-12">
+            <label for="data_inicio" class="form-label">Data Início</label>
+            <input type="date" name="data_inicio" id="data_inicio" class="form-control" value="{{ filtros.data_inicio }}">
+        </div>
+        <div class="col-md-3 col-sm-6 col-12">
+            <label for="data_fim" class="form-label">Data Fim</label>
+            <input type="date" name="data_fim" id="data_fim" class="form-control" value="{{ filtros.data_fim }}">
+        </div>
+        {# O botão ocupa a largura total (col-12) em qualquer tamanho de tela, o que é bom #}
+        <div class="col-12">
+            <button type="submit" class="btn btn-primary">Filtrar</button>
+        </div>
+    </form>
+
+    {# Envolve a tabela em um div com a classe table-responsive #}
+    {# Isso fará com que a tabela tenha uma barra de rolagem horizontal em telas pequenas se necessário #}
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th>Data</th>
+                    <th>Descrição</th>
+                    <th>Valor</th>
+                    <th>Categoria</th>
+                    <th>Tipo</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for t in transacoes %}
+                <tr>
+                    <td>{{ t.data }}</td>
+                    <td>{{ t.descricao }}</td>
+                    <td>R$ {{ t.valor|floatformat:2 }}</td>
+                    <td>{{ t.categoria }}</td>
+                    <td>{{ t.tipo }}</td>
+                </tr>
+                {% empty %}
+                {# colspan="5" está correto para 5 colunas #}
+                <tr><td colspan="5">Nenhuma transação encontrada.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div> {# Fecha .table-responsive #}
+
+    {% if grafico_url %}
+        {# Adiciona um pequeno espaço acima do título do gráfico #}
+        <h3 class="mt-4">Gráfico de Despesas por Categoria</h3>
+        {# A classe img-fluid já torna a imagem responsiva, escalando com o contêiner #}
+        <img src="data:image/png;base64,{{ grafico_url }}" alt="Gráfico de Despesas" class="img-fluid" />
+    {% endif %}
+
+</div> {# Fecha .container #}
+{% endblock %} {# AQUI TERMINA O ÚNICO E CORRETO BLOCO CONTENT #}

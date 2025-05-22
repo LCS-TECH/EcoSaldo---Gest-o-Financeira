@@ -1,0 +1,89 @@
+{% extends 'financas/base.html' %}
+{% load widget_tweaks %}
+
+
+{% block title %}Criar Conta - EcoSaldo{% endblock %}
+
+{% block content %}
+<div class="container mt-5 d-flex justify-content-center">
+    <div class="login-card" style="max-width: 420px; width: 100%;">
+        <div class="card-header" style="background-color: #28a745; color: white; border-radius: 16px 16px 0 0; text-align: center; padding: 2rem; position: relative; overflow: hidden;">
+            <img src="https://via.placeholder.com/80x80/28a745/ffffff?text=ES" alt="EcoSaldo Logo" class="logo floating" style="width: 80px; margin-bottom: 1rem; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1)); animation: floating 3s ease-in-out infinite;">
+            <h2 class="fw-bold mb-2">Crie sua conta</h2>
+            <p class="mb-0 opacity-85">Comece a gerenciar suas finanças agora</p>
+        </div>
+        <div class="card-body p-4">
+            <form method="post" novalidate>
+                {% csrf_token %}
+                {{ form.non_field_errors }}
+                <div class="mb-3">
+                    <label for="{{ form.username.id_for_label }}" class="form-label fw-medium">
+                        <i class="fas fa-user me-2 text-primary"></i>Usuário
+                    </label>
+                    {{ form.username|add_class:"form-control form-control-lg" }}
+                    {% for error in form.username.errors %}
+                        <div class="invalid-feedback d-block">
+                            <i class="fas fa-circle-exclamation me-1"></i>{{ error }}
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="mb-3">
+                    <label for="{{ form.email.id_for_label }}" class="form-label fw-medium">
+                        <i class="fas fa-envelope me-2 text-primary"></i>Email
+                    </label>
+                    {{ form.email|add_class:"form-control form-control-lg" }}
+                    {% for error in form.email.errors %}
+                        <div class="invalid-feedback d-block">
+                            <i class="fas fa-circle-exclamation me-1"></i>{{ error }}
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="mb-3">
+                    <label for="{{ form.password1.id_for_label }}" class="form-label fw-medium">
+                        <i class="fas fa-lock me-2 text-primary"></i>Senha
+                    </label>
+                    {{ form.password1|add_class:"form-control form-control-lg" }}
+                    {% for error in form.password1.errors %}
+                        <div class="invalid-feedback d-block">
+                            <i class="fas fa-circle-exclamation me-1"></i>{{ error }}
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="mb-3">
+                    <label for="{{ form.password2.id_for_label }}" class="form-label fw-medium">
+                        <i class="fas fa-lock me-2 text-primary"></i>Confirme a Senha
+                    </label>
+                    {{ form.password2|add_class:"form-control form-control-lg" }}
+                    {% for error in form.password2.errors %}
+                        <div class="invalid-feedback d-block">
+                            <i class="fas fa-circle-exclamation me-1"></i>{{ error }}
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="d-grid mt-4">
+                    <button type="submit" class="btn btn-success btn-lg rounded-pill py-3 fw-bold">
+                        <i class="fas fa-user-plus me-2"></i>Criar Conta
+                    </button>
+                </div>
+            </form>
+            <div class="text-center mt-4">
+                <small class="security-message">
+                    <i class="fas fa-shield-alt me-1"></i> Suas informações estão protegidas
+                </small>
+            </div>
+            <p class="text-center mt-3">Já tem uma conta? <a href="{% url 'login' %}">Entrar</a></p>
+        </div>
+    </div>
+</div>
+
+<style>
+@keyframes floating {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-8px); }
+    100% { transform: translateY(0px); }
+}
+.floating {
+    animation: floating 3s ease-in-out infinite;
+}
+</style>
+{% endblock %}

@@ -1,0 +1,542 @@
+{# financas/templates/financas/form_transacao.html - CORRIGIDO E COMPLETO #}
+{% extends 'financas/base.html' %}
+
+{# Define o título da página, ajustando para adicionar ou editar #}
+{% block title %}{% if form.instance.pk %}Editar Transação{% else %}Adicionar Transação{% endif %} - EcoSaldo{% endblock %}
+
+{# Bloco para CSS extra, incluindo seus estilos personalizados #}
+{% block extra_css %}
+<style>
+    /* Variáveis CSS para consistência de cor */
+    :root {
+        --primary-color: #28a745; /* Bootstrap success green */
+        --primary-dark: #218838; /* Darker success green */
+        --secondary-color: #6c757d; /* Bootstrap secondary grey */
+        --secondary-dark: #5a6268; /* Darker grey */
+        --error-color: #dc3545; /* Bootstrap danger red */
+        --border-color: #ced4da; /* Bootstrap border color */
+        --shadow-color: rgba(0, 0, 0, 0.08); /* Sombra padrão */
+         /* Cores específicas para gradiente do cabeçalho */
+        --header-gradient-start: #2E7D32; /* Verde Escuro */
+        --header-gradient-end: #4CAF50; /* Verde Médio */
+    }
+
+    body {
+        background-color: #f8f9fa; /* Fundo cinza claro para o corpo */
+    }
+
+    .transaction-form-card {
+        max-width: 700px; /* Largura máxima para o card */
+        margin: 2rem auto; /* Centraliza o card horizontalmente com margem superior/inferior */
+        border: none; /* Remove a borda padrão do card */
+        border-radius: 16px; /* Cantos arredondados mais proeminentes */
+        box-shadow: 0 10px 30px var(--shadow-color); /* Sombra suave e elegante */
+        overflow: hidden; /* Garante que a sombra e bordas arredondadas sejam aplicadas corretamente */
+        animation: fadeIn 0.5s ease-in-out; /* Animação de entrada suave */
+    }
+
+    .transaction-form-card .card-header {
+        /* Gradiente verde para o cabeçalho */
+        background: linear-gradient(135deg, var(--header-gradient-start), var(--header-gradient-end));
+        color: #fff; /* Texto branco */
+        font-weight: 600; /* Peso da fonte */
+        display: flex; /* Usa flexbox para alinhar ícone e texto */
+        align-items: center; /* Alinha verticalmente */
+        gap: 0.75rem; /* Espaçamento entre ícone e texto */
+        padding: 1.5rem 2rem; /* Espaçamento interno */
+        border-radius: 16px 16px 0 0; /* Arredonda apenas os cantos superiores */
+    }
+
+    .transaction-form-card .card-header h1 {
+         color: #fff; /* Garante que o título seja branco mesmo se houver outras regras */
+         margin-bottom: 0; /* Remove margem inferior padrão do h1 */
+         font-size: 1.75rem; /* Tamanho da fonte ajustado */
+    }
+     .transaction-form-card .card-header i {
+         font-size: 1.8rem; /* Tamanho do ícone no cabeçalho */
+     }
+
+
+    .transaction-form-card .card-body {
+        padding: 2.5rem; /* Espaçamento interno maior no corpo do card */
+        background-color: white; /* Fundo branco para o corpo */
+    }
+
+    .form-label {
+        font-weight: 500; /* Peso da fonte */
+        color: var(--text-color); /* Cor do texto principal */
+        margin-bottom: 0.5rem; /* Espaço abaixo do label */
+    }
+
+    .form-control, .form-select {
+        border-radius: 8px; /* Cantos arredondados */
+        border: 1px solid var(--border-color); /* Borda cinza padrão */
+        padding: 0.75rem 1rem; /* Espaçamento interno */
+        transition: all 0.3s ease; /* Transição suave para foco e hover */
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Sombra sutil */
+        font-size: 1rem; /* Tamanho da fonte padrão */
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: var(--primary-color); /* Borda verde no foco */
+        box-shadow: 0 0 0 0.25rem rgba(40, 167, 69, 0.25); /* Sombra verde suave no foco */
+        transform: scale(1.01); /* Efeito sutil de zoom no foco */
+    }
+
+    /* Estilos para campos inválidos */
+    .form-control.is-invalid, .form-select.is-invalid {
+        border-color: var(--error-color); /* Borda vermelha */
+        background-image: none; /* Remove ícone de fundo padrão do Bootstrap se houver */
+    }
+
+    .invalid-feedback {
+        /* O display: none/block será gerenciado pelo Bootstrap via .is-invalid */
+        font-size: 0.9rem; /* Tamanho da fonte para mensagens de erro */
+        color: var(--error-color); /* Cor vermelha para erros */
+        margin-top: 0.25rem; /* Espaço acima */
+        /* removido display: none aqui */
+    }
+
+    /* Garante que o feedback apareça quando a classe is-invalid está presente */
+    /* Esta regra CSS padrão do Bootstrap é a mais confiável */
+     .form-control.is-invalid ~ .invalid-feedback,
+     .form-select.is-invalid ~ .invalid-feedback,
+     .form-check-input.is-invalid ~ .invalid-feedback {
+         display: block;
+     }
+
+     /* Feedback de erro para campos dentro de um input-group (como a senha) */
+     /* Precisa ser tratado separadamente pois não é o *próximo* sibling do input */
+     /* Assumindo que o invalid-feedback está FORA do input-group mas dentro do mesmo mb-* div */
+    .input-group + .invalid-feedback {
+         display: block; /* Mantém display: block para erros de Django antes da validação JS */
+    }
+
+
+    .form-text {
+        font-size: 0.85rem; /* Tamanho da fonte para help text */
+        color: var(--dark-gray); /* Cor cinza escuro para help text */
+    }
+
+    .btn {
+        padding: 0.75rem 1.5rem; /* Espaçamento interno dos botões */
+        border-radius: 8px; /* Cantos arredondados dos botões */
+        font-weight: 500; /* Peso da fonte */
+        transition: all 0.3s ease; /* Transição suave */
+        font-size: 1rem; /* Tamanho da fonte */
+    }
+
+    /* Botão Salvar (Primário) */
+    .btn-primary {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+    }
+
+    .btn-primary:hover, .btn-primary:focus {
+        background-color: var(--primary-dark); /* Cor mais escura no hover */
+        border-color: var(--primary-dark);
+        transform: translateY(-2px); /* Efeito de levantar */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* Sombra no hover */
+    }
+
+    /* Botão Cancelar (Secundário) */
+    .btn-secondary {
+        background-color: var(--secondary-color);
+        border-color: var(--secondary-color);
+        color: #fff; /* Texto branco */
+    }
+
+    .btn-secondary:hover, .btn-secondary:focus {
+        background-color: var(--secondary-dark); /* Cor mais escura no hover */
+        border-color: var(--secondary-dark);
+        transform: translateY(-2px); /* Efeito de levantar */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* Sombra no hover */
+    }
+
+    /* Animação de entrada do card */
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Estilos responsivos */
+    @media (max-width: 768px) { /* Breakpoint médio */
+        .transaction-form-card {
+             margin: 1.5rem auto; /* Ajusta margem */
+             max-width: 95%; /* Permite que o card ocupe mais largura */
+        }
+        .transaction-form-card .card-body {
+             padding: 2rem; /* Ajusta padding */
+        }
+         .transaction-form-card .card-header {
+             padding: 1.25rem 1.5rem;
+         }
+         .transaction-form-card .card-header h1 {
+             font-size: 1.6rem;
+         }
+         .transaction-form-card .card-header i {
+             font-size: 1.6rem;
+         }
+         .form-control, .form-select, .btn {
+             padding: 0.7rem 1rem; /* Ajusta padding de inputs e botões */
+             font-size: 0.95rem;
+         }
+    }
+
+    @media (max-width: 576px) { /* Breakpoint pequeno */
+        .transaction-form-card {
+            margin: 1rem; /* Margem menor em telas pequenas */
+        }
+        .transaction-form-card .card-body {
+            padding: 1.5rem; /* Padding menor */
+        }
+         .transaction-form-card .card-header {
+             padding: 1rem;
+         }
+         .transaction-form-card .card-header h1 {
+             font-size: 1.3rem;
+         }
+          .transaction-form-card .card-header i {
+             font-size: 1.4rem;
+         }
+        .form-control, .form-select, .btn {
+            padding: 0.6rem 0.8rem; /* Padding ainda menor */
+            font-size: 0.9rem;
+        }
+        .btn {
+            width: 100%; /* Botões ocupam largura total em telas muito pequenas */
+            margin-bottom: 0.5rem; /* Espaço entre botões empilhados */
+        }
+         /* Ajusta o layout dos botões em telas pequenas */
+         .d-flex.justify-content-end { /* A classe d-flex já está no HTML */
+             flex-direction: column;
+             align-items: center; /* Centraliza botões empilhados */
+             gap: 0.5rem; /* Espaço entre eles */
+         }
+          .d-flex.justify-content-end .btn { /* Aplica margens zero aos botões dentro do flex container */
+              margin-right: 0 !important;
+              margin-left: 0 !important;
+          }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+{# Container principal do formulário, centralizado em um card #}
+<div class="transaction-form-card card border-0 shadow-sm" role="form" aria-labelledby="transactionFormTitle">
+    {# Cabeçalho do Card com título e ícone #}
+    <div class="card-header">
+        <i class="fas fa-exchange-alt"></i> {# Ícone de transação #}
+        <h1 id="transactionFormTitle" class="mb-0">{% if form.instance.pk %}Editar Transação{% else %}Adicionar Transação{% endif %}</h1> {# Título dinâmico #}
+    </div>
+
+    {# Corpo do Card #}
+    <div class="card-body">
+        {# Formulário de POST #}
+        {# row g-3: para layout de grid com espaçamento #}
+        {# novalidate: desativa validação HTML5 nativa #}
+        {# needs-validation: classe Bootstrap para ativação da validação via JS #}
+        <form method="post" id="transactionForm" class="row g-3 needs-validation" novalidate>
+            {% csrf_token %} {# Token CSRF do Django para segurança #}
+
+            {# Mensagens de erro não relacionadas a campos (erros globais do formulário) #}
+            {# mb-4: margem inferior #}
+            {% if form.non_field_errors %}
+                <div class="col-12">
+                     <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+                          <h4 class="alert-heading fs-6"><i class="fas fa-circle-exclamation me-2"></i>Erro no Formulário:</h4> {# Título para erros globais #}
+                         {% for error in form.non_field_errors %}
+                             <p class="mb-0">{{ error }}</p> {# Mensagem individual do erro #}
+                         {% endfor %}
+                         {# Botão para fechar o alerta (requer JS do Bootstrap) #}
+                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                     </div>
+                </div>
+            {% endif %}
+
+            {# Campos do formulário - Usando o sistema de grid do Bootstrap #}
+            {# Os campos são renderizados individualmente para controle total #}
+
+            {# Descrição e Valor lado a lado em telas médias+ #}
+            <div class="col-12 col-md-6"> {# Ocupa 12 colunas em mobile, 6 em telas médias+ #}
+                <label for="{{ form.descricao.id_for_label }}" class="form-label">{{ form.descricao.label }}</label>
+                {{ form.descricao }} {# Renderiza o input[type="text"] #}
+                {# Ajuda do campo #}
+                {% if form.descricao.help_text %}<div id="{{ form.descricao.id_for_label }}Help" class="form-text">{{ form.descricao.help_text|safe }}</div>{% endif %}
+                {# Feedback de erro específico do campo (exibido via Bootstrap CSS quando .is-invalid está presente) #}
+                {% for error in form.descricao.errors %}<div class="invalid-feedback">{{ error }}</div>{% endfor %}
+            </div>
+            <div class="col-12 col-md-6"> {# Ocupa 12 colunas em mobile, 6 em telas médias+ #}
+                 <label for="{{ form.valor.id_for_label }}" class="form-label">{{ form.valor.label }}</label>
+                 {{ form.valor }} {# Renderiza o input[type="number"] #}
+                 {# Ajuda do campo #}
+                 {% if form.valor.help_text %}<div id="{{ form.valor.id_for_label }}Help" class="form-text">{{ form.valor.help_text|safe }}</div>{% endif %}
+                 {# Feedback de erro específico do campo #}
+                 {% for error in form.valor.errors %}<div class="invalid-feedback">{{ error }}</div>{% endfor %}
+            </div>
+
+            {# Data e Tipo lado a lado em telas médias+ #}
+            <div class="col-12 col-md-6"> {# Ocupa 12 colunas em mobile, 6 em telas médias+ #}
+                <label for="{{ form.data.id_for_label }}" class="form-label">{{ form.data.label }}</label>
+                {{ form.data }} {# Renderiza o input[type="date"] #}
+                 {# Ajuda do campo #}
+                {% if form.data.help_text %}
+                    <div id="{{ form.data.id_for_label }}Help" class="form-text">
+                        {{ form.data.help_text|safe }}
+                    </div>
+                {% endif %}
+                {# Feedback de erro específico do campo #}
+                {% for error in form.data.errors %}
+                    <div class="invalid-feedback">{{ error }}</div>
+                {% endfor %}
+            </div>
+            <div class="col-12 col-md-6"> {# Ocupa 12 colunas em mobile, 6 em telas médias+ #}
+                 <label for="{{ form.tipo.id_for_label }}" class="form-label">{{ form.tipo.label }}</label>
+                 {{ form.tipo }} {# Renderiza o select #}
+                  {# Ajuda do campo #}
+                 {% if form.tipo.help_text %}
+                     <div id="{{ form.tipo.id_for_label }}Help" class="form-text">
+                        {{ form.tipo.help_text|safe }}
+                    </div>
+                 {% endif %}
+                 {# Feedback de error específico do campo #}
+                 {% for error in form.tipo.errors %}
+                    <div class="invalid-feedback">{{ error }}</div>
+                 {% endfor %}
+            </div>
+
+            {# Categoria ocupa largura total em todos os tamanhos #}
+             <div class="col-12">
+                 <label for="{{ form.categoria.id_for_label }}" class="form-label">{{ form.categoria.label }}</label>
+                 {{ form.categoria }} {# Renderiza o select #}
+                 {# Ajuda do campo #}
+                 {% if form.categoria.help_text %}
+                     <div id="{{ form.categoria.id_for_label }}Help" class="form-text">
+                        {{ form.categoria.help_text|safe }}
+                    </div>
+                 {% endif %}
+                 {# Feedback de error específico do campo #}
+                 {% for error in form.categoria.errors %}
+                    <div class="invalid-feedback">{{ error }}</div>
+                 {% endfor %}
+             </div>
+
+             {# Método de Pagamento ocupa largura total ou metade em telas médias+ #}
+            <div class="col-12 col-md-6">
+                 <label for="{{ form.metodo_pagamento.id_for_label }}" class="form-label">{{ form.metodo_pagamento.label }}</label>
+                 {{ form.metodo_pagamento }} {# Renderiza o select #}
+                 {# Ajuda do campo #}
+                 {% if form.metodo_pagamento.help_text %}
+                     <div id="{{ form.metodo_pagamento.id_for_label }}Help" class="form-text">
+                        {{ form.metodo_pagamento.help_text|safe }}
+                    </div>
+                 {% endif %}
+                 {# Feedback de error específico do campo #}
+                 {% for error in form.metodo_pagamento.errors %}
+                    <div class="invalid-feedback">{{ error }}</div>
+                 {% endfor %}
+             </div>
+
+             {# Checkbox Parcelado e os campos de parcela lado a lado em telas médias+ #}
+             {# O container 'col-12 col-md-6' os agrupa #}
+             <div class="col-12 col-md-6">
+                 {# Checkbox Parcelado no estilo switch #}
+                 <div class="form-check form-switch mb-3"> {# mb-3 adiciona espaço abaixo do switch #}
+                    {{ form.parcelado }} {# Renderiza o input checkbox #}
+                    <label class="form-check-label" for="{{ form.parcelado.id_for_label }}">{{ form.parcelado.label }}</label>
+                     {# Feedback de erro para o checkbox Parcelado #}
+                    {% for error in form.parcelado.errors %}
+                        <div class="invalid-feedback">{{ error }}</div>
+                    {% endfor %}
+                 </div>
+
+                 {# Container para Número de Parcelas (controlado por JS - inicialmente pode estar oculto via JS/CSS) #}
+                 <div class="mb-3" id="num_parcelas_field_container"> {# mb-3 adiciona espaço abaixo deste campo #}
+                      <label for="{{ form.num_parcelas.id_for_label }}" class="form-label">{{ form.num_parcelas.label }}</label>
+                      {{ form.num_parcelas }} {# Renderiza o input number #}
+                      {# Ajuda do campo #}
+                      {% if form.num_parcelas.help_text %}
+                           <div id="{{ form.num_parcelas.id_for_label }}Help" class="form-text">
+                              {{ form.num_parcelas.help_text|safe }}
+                           </div>
+                      {% endif %}
+                     {# Feedback de error específico #}
+                     {% for error in form.num_parcelas.errors %}
+                         <div class="invalid-feedback"> {{ error }}</div>
+                     {% endfor %}
+                 </div>
+
+                 {# Container para Parcela Atual (controlado por JS - inicialmente pode estar oculto via JS/CSS) #}
+                 <div id="parcela_atual_field_container"> {# Sem mb-3 aqui, o mt-4 na próxima div dará o espaço #}
+                      <label for="{{ form.parcela_atual.id_for_label }}" class="form-label">{{ form.parcela_atual.label }}</label>
+                      {{ form.parcela_atual }} {# Renderiza o input number #}
+                      {# Ajuda do campo #}
+                      {% if form.parcela_atual.help_text %}
+                          <div id="{{ form.parcela_atual.id_for_label }}Help" class="form-text">
+                             {{ form.parcela_atual.help_text|safe }}
+                          </div>
+                      {% endif %}
+                     {# Feedback de error específico #}
+                     {% for error in form.parcela_atual.errors %}
+                         <div class="invalid-feedback"> {{ error }}</div>
+                     {% endfor %}
+                 </div>
+             </div>
+
+
+            {# Botões Salvar e Cancelar #}
+             {# col-12: ocupa largura total #}
+             {# mt-4: espaço acima #}
+             {# d-flex justify-content-end: alinha botões à direita em telas maiores #}
+             {# Media query no CSS ajusta para empilhar em telas pequenas #}
+            <div class="col-12 mt-4 d-flex justify-content-end">
+                 {# Botão de Salvar (Primário) #}
+                <button type="submit" class="btn btn-primary me-2" id="submitButton" aria-label="Salvar transação"> {# me-2 adiciona margem à direita #}
+                    <i class="fas fa-save me-2"></i> <span class="button-text">Salvar</span> {# Ícone e texto #}
+                </button>
+                {# Link para Cancelar (Secundário) #}
+                {# Redireciona para a lista de transações #}
+                <a href="{% url 'lista_transacoes' %}" class="btn btn-secondary" aria-label="Cancelar">
+                    <i class="fas fa-times me-2"></i> Cancelar {# Ícone e texto #}
+                </a>
+            </div>
+        </form>
+    </div> {# Fim card-body #}
+</div> {# Fim transaction-form-card #}
+{% endblock %}
+
+{# Bloco para JavaScript extra #}
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('transactionForm');
+    const submitButton = document.getElementById('submitButton');
+    // Seleciona o span que contém o texto do botão Salvar
+    const buttonTextSpan = submitButton ? submitButton.querySelector('.button-text') : null;
+
+    // Lógica para mostrar/esconder campos de parcela com base no checkbox 'parcelado'
+    const parceladoCheckbox = document.getElementById('{{ form.parcelado.id_for_label }}');
+    const numParcelasContainer = document.getElementById('num_parcelas_field_container');
+    const parcelaAtualContainer = document.getElementById('parcela_atual_field_container');
+
+    function toggleParcelaFields() {
+        const isChecked = parceladoCheckbox.checked;
+        // Usa Bootstrap utility classes d-none (display: none) e d-block (display: block)
+        // Adiciona ou remove a classe d-none
+        if (numParcelasContainer) {
+            numParcelasContainer.classList.toggle('d-none', !isChecked); // d-none se !isChecked
+        }
+        if (parcelaAtualContainer) {
+            parcelaAtualContainer.classList.toggle('d-none', !isChecked); // d-none se !isChecked
+        }
+
+        // Opcional: Se precisar tornar os campos requeridos via JS quando parcelado
+        // e remover o 'required' quando não parcelado
+        // const numParcelasInput = numParcelasContainer ? numParcelasContainer.querySelector('input') : null;
+        // const parcelaAtualInput = parcelaAtualContainer ? parcelaAtualContainer.querySelector('input') : null;
+        // if (numParcelasInput) numParcelasInput.required = isChecked;
+        // if (parcelaAtualInput) parcelaAtualInput.required = isChecked;
+
+         // Opcional: Limpa os valores quando escondidos (boa prática para evitar dados não intencionais)
+         // if (!isChecked) {
+         //     if (numParcelasInput) numParcelasInput.value = '';
+         //     if (parcelaAtualInput) parcelaAtualInput.value = '';
+         // }
+    }
+
+    // Adiciona o evento listener para o checkbox
+    if (parceladoCheckbox) {
+         parceladoCheckbox.addEventListener('change', toggleParcelaFields);
+         // Executa a função uma vez ao carregar a página para definir o estado inicial
+         // Isso é importante para o caso de edição onde o objeto já está parcelado
+         toggleParcelaFields();
+    } else {
+        // Se o checkbox não existir (por algum motivo), esconde os campos por padrão
+        // Isso pode acontecer se o campo 'parcelado' for removido do formulário por engano
+        if (numParcelasContainer) numParcelasContainer.classList.add('d-none');
+        if (parcelaAtualContainer) parcelaAtualContainer.classList.add('d-none');
+    }
+
+
+    // Lógica de validação Bootstrap com animação no submit
+    if (form) {
+         form.addEventListener('submit', function(event) {
+             // Verifica a validade do formulário (incluindo validação HTML5 nativa pelos atributos 'required', etc.)
+             // checkValidity() verifica todos os campos visíveis e requeridos
+             if (!form.checkValidity()) {
+                 event.preventDefault(); // Impede o envio se inválido
+                 event.stopPropagation(); // Impede a propagação do evento
+
+                 // Adiciona a classe 'was-validated' ao formulário
+                 // Isso ativa as classes .is-invalid e .invalid-feedback do Bootstrap via CSS
+                 form.classList.add('was-validated');
+
+                 // Opcional: Adiciona efeito de shake nos campos inválidos com Animate.css
+                 // Seleciona apenas os campos inválidos que são visíveis (não ocultos por d-none)
+                 const invalidFields = form.querySelectorAll(':invalid:not(.d-none input, .d-none select, .d-none textarea)'); // Exclui campos inválidos em contêineres ocultos
+                 invalidFields.forEach(field => {
+                     // Adiciona a classe de animação se ainda não tiver
+                     if (!field.classList.contains('animate__headShake')) {
+                         field.classList.add('animate__animated', 'animate__headShake');
+                         // Remove a classe de animação após a conclusão para permitir que ocorra novamente
+                         field.addEventListener('animationend', () => {
+                             field.classList.remove('animate__animated', 'animate__headShake');
+                         }, { once: true }); // Remove o listener após ser executado uma vez
+                     }
+                 });
+
+                 // Opcional: Rolagem suave até o primeiro campo inválido visível e foca nele
+                 const firstInvalid = form.querySelector(':invalid:not(.d-none input, .d-none select, .d-none textarea)'); // Pega o primeiro inválido VISÍVEL
+                 if (firstInvalid) {
+                     firstInvalid.scrollIntoView({
+                         behavior: 'smooth',
+                         block: 'center' // Centraliza o campo inválido na tela
+                     });
+                     firstInvalid.focus(); // Foca o campo
+                 }
+
+             } else {
+                 // Se o formulário for válido, mostra estado de loading no botão
+                 if (submitButton) { // Verifica se o botão existe
+                      submitButton.disabled = true; // Desativa o botão
+                      // Adiciona spinner e muda texto
+                      // Usa buttonTextSpan para atualizar apenas o texto dentro do span
+                      if (buttonTextSpan) buttonTextSpan.textContent = 'Salvando...';
+                      // Adiciona spinner, garantindo que não duplica se já houver um
+                      if (!submitButton.querySelector('.spinner-border')) {
+                           const spinner = document.createElement('span');
+                           spinner.classList.add('spinner-border', 'spinner-border-sm', 'me-2');
+                           spinner.setAttribute('role', 'status');
+                           spinner.setAttribute('aria-hidden', 'true');
+                           submitButton.insertBefore(spinner, buttonTextSpan); // Insere o spinner antes do texto
+                      }
+
+                      // remove a classe 'pulse' se estiver usando (a animação pulse)
+                      submitButton.classList.remove('pulse');
+                 }
+             }
+         }, false); // UseCapture = false
+    }
+
+    // Opcional: Adicionar validação visual em tempo real *após* o primeiro submit
+    // form.addEventListener('input', function(event) {
+    //     if (form.classList.contains('was-validated')) { // Só valida em tempo real após a primeira tentativa
+    //         const input = event.target;
+    //         // Verifica se o input é um campo que suporta checkValidity
+    //         if (input.checkValidity && typeof input.checkValidity === 'function') {
+    //              // Verifica se o campo está visível antes de validar em tempo real
+    //              if (!input.closest('.d-none')) { // Verifica se o campo ou um ancestral próximo está oculto
+    //                  if (input.checkValidity()) {
+    //                      input.classList.remove('is-invalid');
+    //                  } else {
+    //                      input.classList.add('is-invalid');
+    //                  }
+    //              }
+    //         }
+    //     }
+    // });
+
+
+});
+</script>
+{% endblock %}

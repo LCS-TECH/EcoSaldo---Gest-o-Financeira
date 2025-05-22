@@ -1,0 +1,259 @@
+{# financas/templates/financas/confirma_exclusao.html - CORRIGIDO E COMPLETO #}
+{% extends 'financas/base.html' %}
+
+{# Define o título da página, ajustando para incluir o tipo de objeto #}
+{% block title %}Confirmar Exclusão de {{ tipo }} - EcoSaldo{% endblock %}
+
+{# Bloco para CSS extra, incluindo seus estilos personalizados #}
+{% block extra_css %}
+<style>
+    /* Variáveis CSS para consistência de cor (usando valores comuns ou Bootstrap) */
+    :root {
+        --primary-color: #28a745; /* Bootstrap success green */
+        --secondary-color: #6c757d; /* Bootstrap secondary grey */
+        --secondary-dark: #5a6268; /* Darker grey */
+        --danger-color: #dc3545; /* Bootstrap danger red */
+        --danger-dark: #b71c1c; /* Um vermelho mais escuro para hover */
+        --border-color: #ced4da; /* Bootstrap border color */
+        --shadow-color: rgba(0, 0, 0, 0.1); /* Sombra para cards */
+        --text-color: #212529; /* Cor do texto principal (quase preto) */
+        --text-muted: #6c757d; /* Cor do texto mutado (cinza escuro) */
+        --light-gray: #f8f9fa; /* Fundo cinza claro */
+         /* Cores específicas para gradiente do cabeçalho de exclusão */
+        --header-danger-start: #EF5350; /* Vermelho mais claro */
+        --header-danger-end: #D32F2F; /* Vermelho padrão */
+    }
+
+     body {
+         background-color: var(--light-gray); /* Fundo cinza claro */
+         color: var(--text-color); /* Cor do texto principal */
+     }
+
+    .delete-confirmation-card {
+        max-width: 500px; /* Largura máxima para o card de confirmação */
+        margin: 2rem auto; /* Centraliza o card horizontalmente */
+        border: none; /* Remove a borda padrão */
+        border-radius: 12px; /* Cantos arredondados */
+        box-shadow: 0 8px 25px var(--shadow-color); /* Sombra suave */
+        overflow: hidden; /* Garante que a sombra e bordas arredondadas sejam aplicadas corretamente */
+         animation: fadeIn 0.5s ease-in-out; /* Animação de entrada suave */
+         background-color: white; /* Fundo branco para o card */
+    }
+
+     .delete-confirmation-card .card-header {
+         /* Gradiente vermelho para o cabeçalho de perigo */
+        background: linear-gradient(135deg, var(--header-danger-start), var(--header-danger-end));
+        color: #fff; /* Texto branco */
+        font-weight: 600;
+        display: flex; /* Usa flexbox para alinhar ícone e texto */
+        align-items: center; /* Alinha verticalmente */
+        gap: 0.75rem; /* Espaçamento entre ícone e texto */
+        padding: 1.25rem 1.5rem; /* Espaçamento interno */
+        border-radius: 12px 12px 0 0; /* Arredonda apenas os cantos superiores */
+     }
+     .delete-confirmation-card .card-header h1 {
+         color: #fff; /* Garante que o título seja branco */
+         margin-bottom: 0; /* Remove margem inferior padrão do h1 */
+         font-size: 1.6rem; /* Tamanho da fonte ajustado */
+     }
+     .delete-confirmation-card .card-header i {
+         font-size: 1.7rem; /* Tamanho do ícone */
+     }
+
+    .delete-confirmation-card .card-body {
+        padding: 1.5rem; /* Espaçamento interno */
+    }
+
+    .delete-confirmation-card p {
+        margin-bottom: 1.5rem; /* Espaço abaixo do texto */
+        font-size: 1.1rem; /* Tamanho do texto */
+        color: var(--text-muted); /* Cor do texto mutado (cinza escuro) */
+        line-height: 1.5; /* Espaçamento entre linhas */
+    }
+
+     .delete-confirmation-card p strong {
+          color: var(--text-color); /* Cor mais escura para o nome do objeto destacado */
+     }
+
+
+    .btn {
+        padding: 0.5rem 1.5rem; /* Espaçamento interno dos botões */
+        font-weight: 500; /* Peso da fonte */
+        border-radius: 6px; /* Cantos arredondados */
+        transition: all 0.3s ease; /* Transição suave */
+    }
+
+    /* Botão de Excluir (Primário de Perigo) */
+    .btn-danger {
+        background-color: var(--danger-color);
+        border-color: var(--danger-color);
+        color: #fff; /* Texto branco */
+    }
+
+     .btn-danger:hover, .btn-danger:focus {
+         background-color: var(--danger-dark); /* Cor mais escura no hover */
+         border-color: var(--danger-dark);
+         transform: translateY(-2px); /* Efeito de levantar */
+         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* Sombra no hover */
+     }
+
+    /* Botão Cancelar (Secundário) */
+    .btn-secondary {
+        background-color: var(--secondary-color);
+        border-color: var(--secondary-color);
+        color: #fff; /* Texto branco */
+    }
+
+    .btn-secondary:hover, .btn-secondary:focus {
+        background-color: var(--secondary-dark); /* Cor mais escura no hover */
+        border-color: var(--secondary-dark);
+        transform: translateY(-2px); /* Efeito de levantar */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* Sombra no hover */
+    }
+
+     @keyframes fadeIn {
+         from { opacity: 0; transform: translateY(20px); }
+         to { opacity: 1; transform: translateY(0); }
+     }
+
+    /* Estilos responsivos */
+    @media (max-width: 576px) {
+        .delete-confirmation-card {
+            margin: 1rem; /* Margem menor em telas pequenas */
+             max-width: 100%; /* Ocupa largura total */
+        }
+         .delete-confirmation-card .card-body {
+             padding: 1rem; /* Padding menor */
+         }
+         .delete-confirmation-card .card-header h1 {
+             font-size: 1.4rem;
+         }
+         .delete-confirmation-card .card-header i {
+             font-size: 1.5rem;
+         }
+         .btn {
+            width: 100%; /* Botões ocupam largura total */
+            margin-bottom: 0.5rem; /* Espaço entre botões */
+         }
+         /* Ajusta o layout dos botões em telas pequenas */
+         /* Aplica ao container flex que envolve o form e o link */
+         .card-body > .d-flex.justify-content-end { /* Seleciona o flex container no body */
+              flex-direction: column; /* Empilha os itens (form e link) */
+              align-items: center; /* Centraliza os itens empilhados */
+              gap: 0.5rem; /* Espaço entre os itens */
+         }
+          /* Ajusta margens para o formulário do botão Excluir e o link Cancelar */
+         .card-body > .d-flex.justify-content-end .d-inline-block { /* Seleciona o form */
+             width: 100%; /* Faz o formulário ocupar a largura total para que o botão dentro dele também ocupe */
+             margin-right: 0 !important; /* Remove a margem direita do botão Excluir */
+         }
+          .card-body > .d-flex.justify-content-end .btn-secondary { /* Seleciona o link Cancelar */
+             margin-left: 0 !important; /* Remove a margem esquerda padrão (se houver) */
+              margin-top: 0; /* Remove qualquer margem superior extra se já houver espaço do gap */
+         }
+
+    }
+</style>
+{% endblock %}
+
+{# Bloco principal de conteúdo #}
+{% block content %}
+{# Container Bootstrap para centralização e padding lateral #}
+{# mt-4 adiciona um espaço no topo #}
+<div class="container mt-4">
+     {# Row e col para centralizar o card #}
+     <div class="row justify-content-center">
+         {# Tamanho da coluna para o card em diferentes breakpoints #}
+         <div class="col-md-8 col-lg-6">
+
+             {# Card de confirmação de exclusão #}
+            <div class="delete-confirmation-card card border-0 shadow-sm" role="dialog" aria-labelledby="deleteConfirmationTitle">
+                {# Cabeçalho do Card com tema de perigo (vermelho) #}
+                <div class="card-header">
+                    <i class="fas fa-exclamation-triangle"></i> {# Ícone de aviso #}
+                    {# Título fixo #}
+                    <h1 id="deleteConfirmationTitle" class="mb-0">Confirmar Exclusão</h1>
+                </div>
+                {# Corpo do Card com a mensagem e botões #}
+                <div class="card-body">
+                    {# Mensagem de confirmação #}
+                    {# Inclui o tipo de objeto para maior clareza #}
+                    <p aria-describedby="deleteConfirmationDesc">
+                         Você tem certeza que deseja excluir este <strong>{{ tipo }}</strong>?
+                         <br>
+                        "<strong>{{ obj }}</strong>"
+                         <br>
+                         Esta ação não pode ser desfeita.
+                    </p>
+                    {# Formulário para enviar o POST de exclusão #}
+                    {# d-inline-block: para que o formulário e seu botão fiquem na mesma linha que o link de cancelar em telas maiores #}
+                    {# mt-4: margem superior (se a mensagem for longa) #}
+                    <form method="post" class="d-inline-block mt-4" id="deleteForm">
+                        {% csrf_token %} {# Token CSRF do Django #}
+                        {# Botão de confirmação para excluir #}
+                        {# btn-danger: botão vermelho #}
+                        {# me-2: margem à direita #}
+                        {# Ícone e texto #}
+                        <button type="submit" class="btn btn-danger me-2" aria-label="Confirmar exclusão">
+                             <i class="fas fa-trash-alt me-2"></i>Sim, Excluir
+                        </button>
+                    </form>
+
+                    {# Link para cancelar a exclusão #}
+                    {# btn-secondary: botão cinza #}
+                    {# Redireciona para a lista correta (transações ou categorias) com base na variável 'tipo' passada pela view #}
+                    {% if tipo == 'Transação' %}
+                        {# CORRIGIDO: URL sem namespace e com o nome correto 'lista_transacoes' #}
+                        <a href="{% url 'lista_transacoes' %}" class="btn btn-secondary" aria-label="Cancelar exclusão">
+                             <i class="fas fa-times me-2"></i>Cancelar
+                        </a>
+                    {% elif tipo == 'Categoria' %}
+                         {# CORRIGIDO: URL sem namespace e com o nome correto 'lista_categorias' #}
+                         <a href="{% url 'lista_categorias' %}" class="btn btn-secondary" aria-label="Cancelar exclusão">
+                             <i class="fas fa-times me-2"></i>Cancelar
+                        </a>
+                    {% else %}
+                         {# Redireciona para a dashboard como fallback se o tipo não for reconhecido #}
+                         {# CORRIGIDO: URL sem namespace e com o nome correto 'dashboard' #}
+                         <a href="{% url 'dashboard' %}" class="btn btn-secondary" aria-label="Cancelar">
+                             <i class="fas fa-times me-2"></i>Cancelar
+                        </a>
+                    {% endif %}
+                </div> {# Fim card-body #}
+             </div> {# Fim delete-confirmation-card #}
+
+         </div> {# Fim col #}
+     </div> {# Fim row #}
+</div> {# Fim container #}
+{% endblock %}
+
+{# Bloco para JavaScript extra #}
+{% block extra_js %}
+<script>
+// Script opcional para handling do formulário de exclusão (não estritamente necessário para delete simples via POST)
+document.addEventListener('DOMContentLoaded', function() {
+    const deleteForm = document.getElementById('deleteForm');
+    if (deleteForm) {
+         deleteForm.addEventListener('submit', function(event) {
+             // Adicione aqui lógica JS antes de enviar, se necessário
+             // Por exemplo, mostrar um modal de confirmação mais sofisticado
+             // ou desabilitar o botão para evitar cliques múltiplos.
+
+             // Exemplo: desabilitar o botão após o clique
+             const submitButton = deleteForm.querySelector('button[type="submit"]');
+             if(submitButton) {
+                 submitButton.disabled = true;
+                 // Muda o texto e adiciona um spinner Bootstrap
+                 submitButton.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> Excluindo...';
+             }
+         });
+    }
+
+    // Removido o script 'confirm' duplicado do snippet original.
+    // A confirmação padrão agora depende de você ter adicionado `onclick="return confirm(...);"` no link/botão HTML
+    // ou usar um modal JS mais complexo.
+    // O script acima apenas lida com o estado do botão após o submit.
+
+});
+</script>
+{% endblock %}

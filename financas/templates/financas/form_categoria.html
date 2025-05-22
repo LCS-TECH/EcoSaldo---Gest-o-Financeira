@@ -1,0 +1,218 @@
+{% extends 'financas/base.html' %}
+
+{% block title %}{% if form.instance.pk %}Editar{% else %}Adicionar{% endif %} Categoria{% endblock %}
+
+{% block extra_css %}
+<style>
+.category-form-card {
+    max-width: 600px;
+    margin: 2rem auto;
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+.category-form-card .card-header {
+    background: linear-gradient(135deg, #2E7D32, #4CAF50);
+    color: #fff;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    border-radius: 12px 12px 0 0;
+}
+
+.category-form-card .card-body {
+    padding: 2rem;
+}
+
+.form-label {
+    font-weight: 500;
+    color: #212529;
+    margin-bottom: 0.5rem;
+}
+
+.form-control {
+    border-radius: 8px;
+    border: 1px solid #ced4da;
+    padding: 0.75rem 1rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.form-control:focus {
+    border-color: #2E7D32;
+    box-shadow: 0 0 0 0.2rem rgba(46, 125, 50, 0.25);
+    transform: scale(1.01);
+}
+
+.form-control.is-invalid {
+    border-color: #D32F2F;
+    background-image: none;
+}
+
+.invalid-feedback {
+    display: none;
+    font-size: 0.9rem;
+    color: #D32F2F;
+    margin-top: 0.25rem;
+}
+
+.is-invalid ~ .invalid-feedback {
+    display: block;
+}
+
+.form-text {
+    font-size: 0.85rem;
+    color: #6c757d;
+}
+
+.btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background-color: #2E7D32;
+    border-color: #2E7D32;
+}
+
+.btn-primary:hover, .btn-primary:focus {
+    background-color: #1B5E20;
+    border-color: #1B5E20;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.btn-primary:disabled {
+    background-color: #6c757d;
+    border-color: #6c757d;
+    cursor: not-allowed;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    border-color: #6c757d;
+    color: #fff;
+}
+
+.btn-secondary:hover, .btn-secondary:focus {
+    background-color: #5a6268;
+    border-color: #5a6268;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 576px) {
+    .category-form-card {
+        margin: 1rem;
+    }
+    
+    .category-form-card h1 {
+        font-size: 1.5rem;
+    }
+    
+    .form-control {
+        padding: 0.6rem 0.8rem;
+        font-size: 0.95rem;
+    }
+    
+    .btn {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+    
+    .d-flex {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="category-form-card card border-0 shadow-sm" role="form" aria-labelledby="categoryFormTitle">
+    <div class="card-header">
+        <i class="fas fa-tags me-2"></i>
+        <h1 id="categoryFormTitle" class="mb-0">{% if form.instance.pk %}Editar{% else %}Adicionar{% endif %} Categoria</h1>
+    </div>
+    <div class="card-body">
+        <form method="post" id="categoryForm">
+            {% csrf_token %}
+            <div class="mb-4">
+                <label for="{{ form.nome.id_for_label }}" class="form-label">Nome da Categoria</label>
+                <input type="text" name="{{ form.nome.name }}" id="{{ form.nome.id_for_label }}"
+                       class="form-control {% if form.nome.errors %}is-invalid{% endif %}"
+                       value="{{ form.nome.value|default_if_none:'' }}"
+                       maxlength="{{ form.nome.field.max_length|default:100 }}"
+                       required
+                       aria-describedby="nomeHelp {% if form.nome.errors %}nomeError{% endif %}">
+                <div id="nomeHelp" class="form-text">Digite um nome descritivo para a categoria (ex.: Alimentação, Transporte).</div>
+                {% if form.nome.errors %}
+                    <div id="nomeError" class="invalid-feedback">
+                        {% for error in form.nome.errors %}
+                            <i class="fas fa-exclamation-circle me-1"></i> {{ error }}
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div id="nomeError" class="invalid-feedback">
+                        <i class="fas fa-exclamation-circle me-1"></i> O nome da categoria é obrigatório.
+                    </div>
+                {% endif %}
+            </div>
+            <div class="d-flex justify-content-between">
+                <button type="submit" class="btn btn-primary" id="submitButton" aria-label="Salvar categoria">
+                    <i class="fas fa-save me-2"></i> <span class="button-text">Salvar</span>
+                </button>
+                <a href="{% url 'lista_categorias' %}" class="btn btn-secondary" aria-label="Cancelar edição">
+                    <i class="fas fa-times me-2"></i> Cancelar
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('categoryForm');
+    const input = document.querySelector('input[name="nome"]');
+    const submitButton = document.getElementById('submitButton');
+    const buttonText = submitButton.querySelector('.button-text');
+
+    // Real-time validation
+    input.addEventListener('input', function() {
+        if (this.value.trim() === '') {
+            this.classList.add('is-invalid');
+            document.getElementById('nomeError').textContent = 'O nome da categoria é obrigatório.';
+            document.getElementById('nomeError').style.display = 'block';
+        } else {
+            this.classList.remove('is-invalid');
+            document.getElementById('nomeError').style.display = 'none';
+        }
+    });
+
+    // Form submission with loading state
+    form.addEventListener('submit', function(event) {
+        if (input.value.trim() === '') {
+            event.preventDefault();
+            input.classList.add('is-invalid');
+            document.getElementById('nomeError').textContent = 'O nome da categoria é obrigatório.';
+            document.getElementById('nomeError').style.display = 'block';
+            return;
+        }
+
+        // Show loading state
+        submitButton.disabled = true;
+        buttonText.textContent = 'Salvando...';
+        submitButton.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> <span class="button-text">Salvando...</span>';
+    });
+});
+</script>
+{% endblock %}
