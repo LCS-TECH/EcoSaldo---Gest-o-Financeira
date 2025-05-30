@@ -1,585 +1,203 @@
-{# financas/templates/financas/login_standalone_v2.html #}
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - EcoSaldo</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - EcoSaldo</title>
 
-    {# Inclui o CSS do Bootstrap (usando CDN) - v5.3 é uma boa escolha #}
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
 
-    {# Inclui o CSS do Font Awesome (usando CDN) para os ícones - v6 é a mais recente #}
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary-color: #28a745;
+      --primary-hover: #218838;
+      --primary-light: #e8f5e9;
+      --accent-color: #4caf50;
+      --text-color: #2d2d2d;
+      --light-gray: #f5f5f5;
+      --medium-gray: #e0e0e0;
+      --dark-gray: #6c757d;
+      --error-color: #dc3545;
+      --body-bg: #ffffff;
+      --card-bg: #ffffff;
+      --text-color-default: #2d2d2d;
+      --input-bg: #f9f9f9;
+      --input-border: #d1d5db;
+    }
 
-    {# Google Fonts - Poppins para tipografia #}
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    [data-theme="dark"] {
+      --body-bg: #343a40;
+      --card-bg: #444;
+      --text-color-default: #eee;
+      --input-bg: #555;
+      --input-border: #777;
+    }
 
-    {# Animate.css para algumas animações sutis #}
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--body-bg);
+      color: var(--text-color-default);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
 
-    {# Estilos personalizados baseados na sua paleta e design #}
-    <style>
-        /* Definindo variáveis CSS para a paleta de cores */
-        :root {
-            --primary-color: #28a745; /* Bootstrap success green */
-            --primary-hover: #218838; /* Darker success green */
-            --primary-light: #e8f5e9; /* Very light green */
-            --text-color: #333; /* Dark grey for main text */
-            --light-gray: #f8f9fa; /* Bootstrap light gray */
-            --medium-gray: #e9ecef; /* Bootstrap secondary light */
-            --dark-gray: #6c757d; /* Bootstrap secondary dark */
-            --error-color: #dc3545; /* Bootstrap danger red */
-        }
+    .login-container {
+      width: 100%;
+      max-width: 450px;
+    }
 
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: var(--light-gray); /* Fundo cinza claro */
-            color: var(--text-color); /* Cor do texto principal */
-            min-height: 100vh; /* Altura mínima para ocupar a viewport */
-            display: flex; /* Usar flexbox para centralizar o conteúdo */
-            flex-direction: column; /* Empilhar itens verticalmente */
-            /* Efeitos de fundo sutis */
-            background-image:
-                radial-gradient(circle at 10% 20%, rgba(40, 167, 69, 0.08) 0%, transparent 20%), /* Círculo verde suave */
-                radial-gradient(circle at 90% 80%, rgba(40, 167, 69, 0.08) 0%, transparent 20%);
-        }
+    .login-card {
+      background-color: var(--card-bg);
+      border-radius: 1.2rem;
+      box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.1);
+      padding: 2.5rem;
+      position: relative;
+      border: 1px solid var(--primary-light);
+    }
 
-        .login-container {
-            flex: 1; /* Ocupar espaço disponível para centralização */
-            display: flex;
-            align-items: center; /* Centraliza verticalmente no container */
-            justify-content: center; /* Centraliza horizontalmente no container */
-            padding: 20px; /* Padding em volta do container */
-        }
+    .login-card h2 {
+      font-size: 2.25rem;
+      font-weight: 600;
+      color: var(--primary-color);
+      margin-bottom: 2rem;
+      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
 
-        .login-card {
-            border: none; /* Remover borda padrão do card */
-            border-radius: 16px; /* Cantos arredondados */
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); /* Sombra suave */
-            overflow: hidden; /* Esconder qualquer conteúdo que saia dos limites arredondados */
-            transition: transform 0.3s ease, box-shadow 0.3s ease; /* Transição suave ao interagir */
-            width: 100%;
-            max-width: 420px; /* Largura máxima do card */
-            background-color: white; /* Fundo branco para o card */
-        }
+    .form-group {
+      margin-bottom: 1.75rem;
+    }
 
-        .login-card:hover {
-            transform: translateY(-5px); /* Efeito de levantar no hover */
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12); /* Sombra maior no hover */
-        }
+    .form-control {
+      border-radius: 1rem;
+      border: 1px solid var(--input-border);
+      padding: 0.85rem 1.2rem;
+      background-color: var(--input-bg);
+      color: var(--text-color-default);
+      font-size: 1rem;
+      transition: all 0.3s ease;
+    }
 
-        .card-header {
-            background-color: var(--primary-color); /* Fundo verde primário */
-            color: white; /* Texto branco */
-            padding: 2rem; /* Espaçamento interno */
-            text-align: center; /* Centralizar texto */
-            position: relative;
-            overflow: hidden;
-            border-radius: 16px 16px 0 0; /* Arredondar apenas os cantos superiores */
-        }
+    .form-control:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 0.25rem rgba(40, 167, 69, 0.3);
+      background-color: var(--primary-light);
+    }
 
-        /* Efeitos de formas no cabeçalho */
-        .card-header::after,
-        .card-header::before {
-            content: '';
-            position: absolute;
-            background-color: rgba(255, 255, 255, 0.15); /* Branco transparente */
-            border-radius: 50%; /* Formato circular */
-            z-index: 1; /* Garantir que fiquem abaixo do conteúdo */
-        }
+    .btn-primary {
+      width: 100%;
+      padding: 1rem;
+      background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+      border: none;
+      border-radius: 2.5rem;
+      font-size: 1.1rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      transition: all 0.3s ease;
+    }
 
-        .card-header::after {
-            bottom: -60px; /* Posição */
-            left: -60px;
-            width: 160px; /* Tamanho */
-            height: 160px;
-        }
+    .btn-primary:hover {
+      background: linear-gradient(90deg, var(--accent-color), var(--primary-color));
+      transform: translateY(-2px);
+      box-shadow: 0 0.5rem 1rem rgba(40, 167, 69, 0.3);
+    }
 
-        .card-header::before {
-            top: -40px; /* Posição */
-            right: -40px;
-            width: 120px; /* Tamanho */
-            height: 120px;
-        }
+    .btn-secondary {
+      width: 100%;
+      padding: 1rem;
+      border: 2px solid var(--primary-color);
+      color: var(--primary-color);
+      background-color: transparent;
+      border-radius: 2.5rem;
+      font-size: 1.1rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      transition: all 0.3s ease;
+    }
 
-        .card-header > * {
-            position: relative; /* Posicionar conteúdo acima das formas */
-            z-index: 2;
-        }
+    .btn-secondary:hover {
+      background-color: var(--primary-light);
+      color: var(--primary-hover);
+      transform: translateY(-2px);
+    }
 
+    .form-check-label {
+      color: var(--text-color-default);
+      font-size: 0.95rem;
+    }
 
-        .card-body {
-            padding: 2.5rem; /* Espaçamento interno */
-        }
+    .logo {
+      max-width: 250px;
+      margin: 0 auto 2rem;
+      display: block;
+      transition: transform 0.3s ease;
+    }
 
-        .form-label {
-            font-weight: 500; /* Peso da fonte */
-            color: var(--dark-gray); /* Cor cinza escuro */
-            margin-bottom: 0.5rem; /* Espaço abaixo do label */
-            display: flex; /* Usar flexbox para alinhar ícone e texto */
-            align-items: center; /* Centralizar verticalmente ícone e texto */
-        }
+    .logo:hover {
+      transform: scale(1.05);
+    }
 
-        .form-label i {
-            color: var(--primary-color); /* Cor primária para os ícones nos labels */
-            width: 1.25em; /* Garantir largura consistente para os ícones */
-            text-align: center;
-        }
+    .theme-toggle {
+      position: absolute;
+      top: 1.2rem;
+      right: 1.2rem;
+      cursor: pointer;
+      color: var(--primary-color);
+      font-size: 1.5rem;
+      transition: color 0.3s ease, transform 0.3s ease;
+    }
 
-
-        .form-control {
-            border-radius: 8px; /* Cantos arredondados */
-            padding: 12px 15px; /* Espaçamento interno */
-            border: 1px solid var(--medium-gray); /* Borda cinza médio */
-            transition: all 0.3s ease; /* Transição suave */
-        }
-
-        .form-control:focus {
-            border-color: var(--primary-color); /* Borda verde no foco */
-            box-shadow: 0 0 0 0.25rem rgba(40, 167, 69, 0.25); /* Sombra verde suave no foco */
-        }
-
-        /* Estilo para o input-group (campo de senha com toggle) */
-        .input-group .form-control {
-            border-top-right-radius: 0; /* Remover arredondamento no lado do botão */
-            border-bottom-right-radius: 0;
-        }
-        .input-group .btn {
-            border-top-left-radius: 0; /* Remover arredondamento no lado do input */
-            border-bottom-left-radius: 0;
-            border-color: var(--medium-gray); /* Borda do botão igual à do input */
-            padding: 12px 15px; /* Match input padding */
-        }
-        .input-group .btn:hover,
-        .input-group .btn:focus {
-            border-color: var(--primary-color); /* Borda verde no hover/focus */
-        }
-
-
-        .btn-primary {
-            background-color: var(--primary-color); /* Fundo verde primário */
-            border-color: var(--primary-color); /* Borda verde primária */
-            border-radius: 50px; /* Formato "pill" */
-            padding: 12px; /* Espaçamento interno */
-            font-weight: 600; /* Peso da fonte semi-negrito */
-            letter-spacing: 0.5px; /* Espaçamento entre letras */
-            transition: all 0.3s ease; /* Transição suave */
-        }
-
-        .btn-primary:hover, .btn-primary:focus {
-            background-color: var(--primary-hover); /* Fundo verde mais escuro no hover */
-            border-color: var(--primary-hover); /* Borda verde mais escura no hover */
-            transform: translateY(-2px); /* Efeito de levantar no hover */
-            box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3); /* Sombra suave no hover */
-        }
-
-        .btn-outline-success {
-            border-radius: 50px; /* Formato "pill" para o botão secundário */
-            padding: 12px; /* Espaçamento interno */
-            font-weight: 600;
-            border-width: 2px; /* Borda mais grossa */
-            color: var(--primary-color); /* Cor do texto */
-            border-color: var(--primary-color); /* Cor da borda */
-            transition: all 0.3s ease;
-        }
-        .btn-outline-success:hover {
-            background-color: var(--primary-color); /* Fundo verde no hover */
-            color: white; /* Texto branco no hover */
-            border-color: var(--primary-color);
-            transform: translateY(-2px); /* Efeito de levantar */
-        }
-
-
-        .form-check-input:checked {
-            background-color: var(--primary-color); /* Fundo verde quando marcado */
-            border-color: var(--primary-color); /* Borda verde quando marcado */
-        }
-
-        .security-message {
-            font-size: 0.85rem; /* Tamanho da fonte menor */
-            color: var(--dark-gray); /* Cor cinza escuro */
-            display: flex; /* Usar flexbox para alinhar ícone e texto */
-            align-items: center;
-            justify-content: center;
-        }
-
-        .security-message i {
-            color: var(--primary-color); /* Cor primária para o ícone de segurança */
-            margin-right: 0.5rem;
-        }
-
-
-        .logo {
-            width: 80px; /* Tamanho do logo */
-            margin-bottom: 1rem; /* Espaço abaixo */
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1)); /* Sombra suave */
-        }
-
-        /* Animações */
-        .floating {
-            animation: floating 3s ease-in-out infinite;
-        }
-
-        @keyframes floating {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-8px); } /* Ajuste a amplitude se necessário */
-            100% { transform: translateY(0px); }
-        }
-
-        .pulse {
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.4); } /* Sombra inicial transparente */
-            70% { box-shadow: 0 0 0 15px rgba(40, 167, 69, 0); } /* Sombra se expande e some */
-            100% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0); }
-        }
-
-        /* Estilos de validação aprimorados */
-        .form-control.is-invalid {
-            border-color: var(--error-color); /* Borda vermelha */
-            background-image: none; /* Remover ícone de fundo padrão do Bootstrap se houver */
-        }
-
-        .form-control.is-invalid:focus {
-            border-color: var(--error-color);
-            box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25); /* Sombra vermelha no foco */
-        }
-
-        .invalid-feedback {
-            color: var(--error-color); /* Cor vermelha */
-            font-size: 0.85rem; /* Tamanho da fonte */
-            margin-top: 0.25rem; /* Espaço acima */
-            display: none; /* Escondido por padrão */
-        }
-
-        /* Mostrar feedback de erro quando o campo é inválido ou o formulário foi validado */
-        .form-control.is-invalid ~ .invalid-feedback {
-            display: block;
-        }
-        /* Esta regra não é mais necessária se o JS gerenciar `is-invalid` corretamente
-           .needs-validation:not(:valid) .form-control:invalid ~ .invalid-feedback {
-               display: block;
-           }
-        */
-
-        /* Ajuste específico para o feedback de erro abaixo do input-group */
-        .input-group .form-control.is-invalid {
-            border-color: var(--error-color) !important; /* Força a borda vermelha */
-        }
-        .input-group .form-control.is-invalid + .btn {
-            border-color: var(--error-color) !important; /* Força a borda vermelha no botão do input-group */
-        }
-        .input-group + .invalid-feedback {
-            margin-top: 0.25rem; /* Garante espaço abaixo do input-group */
-        }
-
-
-        /* Divisor com texto "ou" */
-        .divider-text {
-            position: relative;
-            text-align: center;
-            margin: 2rem 0;
-            color: var(--dark-gray);
-        }
-        .divider-text hr {
-            position: absolute;
-            width: 100%;
-            top: 50%;
-            left: 0;
-            margin: 0;
-            border-top: 1px solid var(--medium-gray);
-            z-index: 1;
-        }
-        .divider-text div {
-            position: relative;
-            z-index: 2;
-            display: inline-block;
-            background-color: white;
-            padding: 0 1rem;
-        }
-
-        /* Responsividade */
-        @media (max-width: 576px) {
-            .card-body {
-                padding: 1.5rem;
-            }
-
-            .card-header {
-                padding: 1.5rem;
-            }
-            .logo {
-                width: 60px; /* Logo menor em telas pequenas */
-            }
-            h2 {
-                font-size: 1.5rem; /* Título menor */
-            }
-            .card-header::after {
-                bottom: -40px; left: -40px; width: 120px; height: 120px;
-            }
-            .card-header::before {
-                top: -20px; right: -20px; width: 80px; height: 80px;
-            }
-        }
-    </style>
+    .theme-toggle:hover {
+      color: var(--primary-hover);
+      transform: rotate(180deg);
+    }
+  </style>
 </head>
-<body>
+<body data-theme="light">
+  <div class="login-container">
+    <div class="login-card animate__animated animate__fadeIn">
+      {% load static %}
+      <img src="{% static 'EcoSaldo.png' %}" alt="Logo EcoSaldo" class="logo">
+      <h2 class="text-center mb-4">Bem-vindo de volta!</h2>
+      <form method="post" class="needs-validation" novalidate>
+        {% csrf_token %}
+        <div class="form-group">
+          <input type="text" class="form-control" id="username" name="username" placeholder="Usuário" required>
+        </div>
+        <div class="form-group">
+          <input type="password" class="form-control" id="password" name="password" placeholder="Senha" required>
+        </div>
+        <div class="form-check mb-3">
+          <input type="checkbox" class="form-check-input" id="rememberMe">
+          <label class="form-check-label" for="rememberMe">Lembrar de mim</label>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Entrar</button>
+        <a href="{% url 'registro' %}" class="btn btn-secondary btn-block mt-3">Criar nova conta</a>
+      </form>
+      <i class="fas fa-adjust theme-toggle" title="Alternar tema"></i>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Set light theme as default unless explicitly changed
+    const savedTheme = localStorage.getItem('theme');
+    document.documentElement.setAttribute('data-theme', savedTheme || 'light');
 
-    {# Container principal que centraliza o card na página #}
-    <div class="login-container animate__animated animate__fadeIn">
-        <div class="login-card">
-            {# Cabeçalho do Card com tema verde e efeitos #}
-            <div class="card-header">
-
-                {# Título e subtítulo #}
-                <h2 class="fw-bold mb-2">Bem-vindo de volta!</h2>
-                <p class="mb-0 opacity-85">Acesse sua conta EcoSaldo</p>
-            </div>
-
-            {# Corpo do Card com formulário e mensagens #}
-            <div class="card-body">
-                {% if form.non_field_errors %}
-                    {# Alerta de erro customizado #}
-                    <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
-                        {# Título do erro com ícone #}
-                        <h4 class="alert-heading fs-6"><i class="fas fa-circle-exclamation me-2"></i>Erro de Login</h4> {# Ícone atualizado para Font Awesome 6 #}
-                        {% for error in form.non_field_errors %}
-                            <p class="mb-0">{{ error }}</p> {# Mensagem de erro individual #}
-                        {% endfor %}
-                        {# Botão para fechar o alerta (requer JS do Bootstrap) #}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                {% endif %}
-
-                {# novalidate: desativa validação HTML5 nativa para usar a do Bootstrap/Django #}
-                {# needs-validation: classe Bootstrap para ativação via JS #}
-                <form method="post" novalidate class="needs-validation" id="loginForm">
-                    {% csrf_token %} {# Token CSRF do Django - Essencial para segurança #}
-
-                    <div class="mb-4"> {# Margem inferior maior #}
-                        {# Label com ícone e texto #}
-                        <label for="{{ form.username.id_for_label }}" class="form-label fw-medium">
-                            <i class="fas fa-user me-2 text-primary"></i>Usuário
-                        </label>
-                        <div class="input-group">
-                            <input type="text"
-                                   class="form-control form-control-lg {% if form.username.errors %}is-invalid{% endif %}"
-                                   id="{{ form.username.id_for_label }}"
-                                   name="{{ form.username.html_name }}"
-                                   placeholder="Seu nome de usuário" {# Placeholder aprimorado #}
-                                   required {# Validação HTML5 básica #}
-                                   autocomplete="username" {# Boa prática de UX #}
-                                   value="{{ form.username.value|default:'' }}"> {# Mantém o valor em caso de erro #}
-                        </div>
-                        {# Feedback de erro específico do campo #}
-                        {% for error in form.username.errors %}
-                            <div class="invalid-feedback d-block animate__animated animate__fadeIn animate__faster"> {# Adiciona animação #}
-                                <i class="fas fa-circle-exclamation me-1"></i>{{ error }} {# Ícone no erro #}
-                            </div>
-                        {% endfor %}
-                        {# Feedback de erro padrão para validação HTML5 básica (escondido via CSS quando não .is-invalid) #}
-                        <div class="invalid-feedback">
-                            <i class="fas fa-circle-exclamation me-1"></i>Por favor, informe seu usuário.
-                        </div>
-                    </div>
-
-                    <div class="mb-4"> {# Margem inferior maior #}
-                        {# Label com ícone e texto #}
-                        <label for="{{ form.password.id_for_label }}" class="form-label fw-medium">
-                            <i class="fas fa-lock me-2 text-primary"></i>Senha
-                        </label>
-                        {# Input group para o campo de senha e o botão de mostrar/esconder #}
-                        <div class="input-group">
-                            {# Input de senha, tamanho grande, validade marcada com is-invalid #}
-                            <input type="password"
-                                   class="form-control form-control-lg {% if form.password.errors %}is-invalid{% endif %}"
-                                   id="{{ form.password.id_for_label }}"
-                                   name="{{ form.password.html_name }}"
-                                   placeholder="Sua senha" {# Placeholder aprimorado #}
-                                   required {# Validação HTML5 básica #}
-                                   autocomplete="current-password"> {# Boa prática de UX #}
-                            {# Botão para alternar visibilidade da senha #}
-                            {# btn-outline-secondary: estilo de botão #}
-                            {# toggle-password: classe para o JS encontrar #}
-                            {# aria-label: acessibilidade #}
-                            <button class="btn btn-outline-secondary toggle-password" type="button" aria-label="Alternar visibilidade da senha">
-                                {# Ícone do olho - Font Awesome #}
-                                <i class="fas fa-eye"></i>
-                            </button>
-                        </div>
-                        {# Feedback de erro específico do campo de senha #}
-                        {# d-block: força a exibição como bloco abaixo do input-group #}
-                        {# animate__animated animate__fadeIn animate__faster: adiciona animação #}
-                        {% for error in form.password.errors %}
-                            <div class="invalid-feedback d-block animate__animated animate__fadeIn animate__faster">
-                                <i class="fas fa-circle-exclamation me-1"></i>{{ error }} {# Ícone no erro #}
-                            </div>
-                        {% endfor %}
-                        {# Feedback de erro padrão para validação HTML5 básica #}
-                        <div class="invalid-feedback">
-                             <i class="fas fa-circle-exclamation me-1"></i>Por favor, informe sua senha.
-                        </div>
-                    </div>
-
-                    <div class="mb-4">
-                        <div class="form-check">
-                            {# Checkbox Bootstrap #}
-                            <input class="form-check-input" type="checkbox" id="rememberMe">
-                            {# Label associado ao checkbox #}
-                            <label class="form-check-label" for="rememberMe">Lembrar de mim</label>
-                        </div>
-                        {# <<< Opção "Esqueceu a senha?" removida aqui >>> #}
-                    </div>
-
-                    {# d-grid: Faz o botão ocupar a largura total #}
-                    <div class="d-grid mb-4"> {# Margem inferior para separar do divisor #}
-                        {# Botão verde, grande, arredondado, com animação de pulso #}
-                        <button type="submit" class="btn btn-primary btn-lg rounded-pill py-3 fw-bold pulse" id="submitButton">
-                            {# Ícone de login com espaço #}
-                            <i class="fas fa-sign-in-alt me-2"></i>Entrar
-                        </button>
-                    </div>
-
-                    <div class="divider-text">
-                        <hr>
-                        <div>ou</div>
-                    </div>
-
-                    {# d-grid: Faz o link (estilizado como botão) ocupar a largura total #}
-                    <div class="d-grid mt-4"> {# Margem superior para separar do divisor #}
-                        {# Link estilizado como botão outline verde #}
-                        <a href="{% url 'registro' %}" class="btn btn-outline-success btn-lg rounded-pill py-3 fw-bold">
-                            <i class="fas fa-user-plus me-2"></i>Criar nova conta
-                        </a>
-                    </div>
-                </form>
-
-                <div class="text-center mt-4">
-                    {# Mensagem com ícone e cor cinza #}
-                    <small class="security-message">
-                        <i class="fas fa-shield-alt me-1"></i> Suas informações estão protegidas
-                    </small>
-                </div>
-
-            </div> {# Fim card-body #}
-        </div> {# Fim login-card #}
-    </div> {# Fim login-container #}
-
-
-    {# Inclui o JavaScript do Bootstrap (com Popper incluído) - Colocado no final do body #}
-    {# Requerido para funcionalidades como fechar alerta e dropdowns #}
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-    {# JavaScript customizado para interatividade (mostrar/esconder senha, validação) #}
-    <script>
-        // JavaScript para mostrar/esconder a senha
-        document.querySelectorAll('.toggle-password').forEach(button => {
-            button.addEventListener('click', function() {
-                // Encontra o input de senha associado a este botão dentro do mesmo input-group
-                const inputGroup = this.closest('.input-group');
-                if (inputGroup) {
-                    // Busca por um input que seja type='password' ou type='text' dentro do grupo
-                    const passwordInput = inputGroup.querySelector('input[type="password"], input[type="text"]');
-
-                    if (passwordInput) { // Verifica se encontrou o input
-                        const icon = this.querySelector('i'); // Pega o ícone Font Awesome dentro do botão
-
-                        // Alterna o tipo do input entre 'password' e 'text'
-                        const isPassword = passwordInput.type === 'password';
-                        passwordInput.type = isPassword ? 'text' : 'password';
-
-                        // Altera a classe do ícone (Font Awesome) e o aria-label para acessibilidade
-                        if (icon) {
-                            icon.classList.toggle('fa-eye', !isPassword); // Se era password, agora é text, mostra eye
-                            icon.classList.toggle('fa-eye-slash', isPassword); // Se era password, esconde eye-slash
-                            this.setAttribute('aria-label', isPassword ? 'Mostrar senha' : 'Ocultar senha'); // Ajuste aqui para ser mais descritivo
-                        }
-                    }
-                }
-            });
-        });
-
-        // Validação de formulário aprimorada com Bootstrap e animações
-        const form = document.getElementById('loginForm');
-        const submitButton = document.getElementById('submitButton');
-
-        if (form) {
-            // Adiciona a classe 'was-validated' e animação ao tentar submeter formulário inválido
-            form.addEventListener('submit', function(event) {
-                if (!form.checkValidity()) {
-                    event.preventDefault(); // Impede o envio
-                    event.stopPropagation(); // Impede a propagação do evento
-
-                    // Adiciona classe para mostrar mensagens de erro de validação Bootstrap
-                    form.classList.add('was-validated');
-
-                    // Adiciona efeito de shake nos campos inválidos com Animate.css
-                    const invalidFields = form.querySelectorAll(':invalid');
-                    invalidFields.forEach(field => {
-                        field.classList.add('animate__animated', 'animate__headShake');
-                        // Remove a classe de animação após a conclusão para permitir que ocorra novamente
-                        field.addEventListener('animationend', () => {
-                            field.classList.remove('animate__animated', 'animate__headShake');
-                        }, { once: true }); // Remove o listener após ser executado uma vez
-                    });
-
-                    // Rolagem suave até o primeiro campo inválido e foca nele
-                    const firstInvalid = form.querySelector(':invalid');
-                    if (firstInvalid) {
-                        firstInvalid.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'center' // Centraliza o campo inválido na tela
-                        });
-                        firstInvalid.focus(); // Foca o campo
-                    }
-
-                } else {
-                    // Se o formulário for válido, pode adicionar feedback visual ou desativar o botão antes do envio
-                    // submitButton.disabled = true; // Opcional: desativar botão
-                    // submitButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Entrando...'; // Opcional: Mudar texto para loading
-                }
-            }, false);
-
-            // Adiciona/remove classe is-invalid em tempo real ao digitar, após o primeiro submit
-            form.addEventListener('input', function(event) {
-                // Só valida em tempo real após a primeira tentativa de submit (quando 'was-validated' é adicionada)
-                if (form.classList.contains('was-validated')) {
-                    const input = event.target;
-                    // Garante que é um campo que precisa de validação e não é o botão
-                    if (input.checkValidity && (input.tagName === 'INPUT' || input.tagName === 'SELECT' || input.tagName === 'TEXTAREA')) {
-                        if (input.checkValidity()) {
-                            input.classList.remove('is-invalid');
-                        } else {
-                            input.classList.add('is-invalid');
-                        }
-                    }
-                }
-            });
-        }
-
-        // Animação de fade-in e slide-up no card ao carregar a página
-        document.addEventListener('DOMContentLoaded', function() {
-            const card = document.querySelector('.login-card');
-            if (card) {
-                // Define o estado inicial para a animação
-                card.style.opacity = '0';
-                card.style.transform = 'translateY(20px)';
-                card.style.transition = 'none'; // Remove a transição durante a configuração inicial
-
-                // Espera um pouco e então aplica o estado final com transição
-                requestAnimationFrame(() => {
-                     requestAnimationFrame(() => { // Duplo requestAnimationFrame para garantir que o estado inicial foi aplicado
-                         card.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out'; // Define a transição
-                         card.style.opacity = '1'; // Estado final: totalmente visível
-                         card.style.transform = 'translateY(0)'; // Estado final: posição original
-                     });
-                });
-            }
-        });
-
-    </script>
-
+    // Toggle theme on click
+    document.querySelector('.theme-toggle').addEventListener('click', function () {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    });
+  </script>
 </body>
 </html>
