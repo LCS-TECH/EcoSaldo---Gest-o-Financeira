@@ -25,4 +25,7 @@ urlpatterns = [
 
     # Note: URLs para login/logout estão definidas no urls.py principal (ecosaldo/urls.py)
     path('registro/', views.registro, name='registro'),
+    path('perfil/', views.perfil_usuario_view, name='perfil_usuario'),
+    path('configuracoes/', views.configuracoes_view, name='configuracoes'),
+
 ]

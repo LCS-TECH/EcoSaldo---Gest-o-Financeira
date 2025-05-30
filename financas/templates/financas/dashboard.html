@@ -9,145 +9,209 @@
 <style>
     :root {
         --primary-color: #28a745;
+        --primary-hover: #218838;
         --primary-light: #e8f5e9;
         --secondary-color: #6c757d;
-        --secondary-light: #e9ecef;
-        --info-color: #17a2b8;
+        --secondary-light: #f8f9fa;
+        --info-color: #0dcaf0;
         --danger-color: #dc3545;
         --warning-color: #ffc107;
+        --success-color: #198754;
         --text-color: #212529;
         --text-muted: #6c757d;
         --border-color: #dee2e6;
-        --shadow-color: rgba(0, 0, 0, 0.08);
+        --shadow-color: rgba(0, 0, 0, 0.1);
+        --white-color: #ffffff;
+        --success-highlight: #d4edda;
+        --danger-highlight: #f8d7da;
     }
 
     body {
-        background-color: var(--secondary-light, #e9ecef);
-        color: var(--text-color, #212529);
+        background-color: var(--secondary-light);
+        color: var(--text-color);
+        overflow-x: hidden;
+    }
+
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
     }
 
     .dashboard-header {
-        margin-top: 1.5rem;
+        margin: 1.5rem 0;
         padding-bottom: 1rem;
-        border-bottom: 1px solid var(--border-color, #dee2e6);
+        border-bottom: 1px solid var(--border-color);
         display: flex;
         justify-content: space-between;
         align-items: center;
         flex-wrap: wrap;
         gap: 1rem;
+        animation: fadeInUp 0.5s ease-out;
     }
 
     .dashboard-header h1 {
-        font-size: 1.8rem;
-        font-weight: 600;
+        font-size: 1.9rem;
+        font-weight: 700;
         color: var(--text-color);
-        margin-bottom: 0;
+        margin: 0;
+        display: flex;
+        align-items: center;
     }
     .dashboard-header h1 i {
-        color: var(--primary-color, #28a745);
-        opacity: 0.8;
+        color: var(--primary-color);
+        margin-right: 0.75rem;
+        font-size: 1.5rem;
     }
-
-    .summary-card {
-        border: none;
-        border-radius: 12px;
-        box-shadow: 0 5px 15px var(--shadow-color);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        overflow: hidden;
-        height: 100%;
-        color: white;
-    }
-
-    .summary-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
-    }
-
-    .summary-card .card-header {
-        padding: 0.75rem 1.25rem;
-        font-weight: 600;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        border-bottom: 1px solid rgba(255,255,255,.2);
-        color: white;
-    }
-    .summary-card .card-header span {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    .summary-card .card-header h5 {
-        margin-bottom: 0;
-        font-size: 1.1rem;
-    }
-
-    .summary-card .card-body {
-        padding: 1.25rem;
-        background-color: transparent;
-        color: white;
-    }
-
-    .summary-card.bg-primary {
-        background-color: var(--primary-color);
-    }
-    .summary-card.bg-success {
-        background-color: #198754; /* verde bootstrap */
-    }
-    .summary-card.bg-danger {
-        background-color: var(--danger-color);
-    }
-
-    .summary-status {
-        font-size: 0.9rem;
-        color: white;
-        display: flex;
-        align-items: center;
-        margin-bottom: 0;
-        gap: 0.25rem;
-    }
-    .summary-status.text-success { color: #d4edda; }
-    .summary-status.text-danger { color: #f8d7da; }
-    .summary-status.text-muted { color: #e2e3e5; }
 
     .period-selector .btn-group {
         border-radius: 50px;
         overflow: hidden;
+        box-shadow: 0 3px 8px var(--shadow-color);
+        background: var(--white-color);
     }
     .period-selector .btn {
-        font-weight: 500;
-        padding: 0.375rem 1rem;
-        font-size: 0.9rem;
-        border: 1px solid var(--secondary-color);
+        font-weight: 600;
+        padding: 0.5rem 1.25rem;
+        font-size: 0.95rem;
+        border: none;
         color: var(--secondary-color);
-        background-color: white;
-        transition: all 0.3s ease;
-        border-radius: 0;
+        background: transparent;
+        transition: all 0.2s ease;
+        position: relative;
+        z-index: 1;
     }
     .period-selector .btn-group > .btn:first-child { border-top-left-radius: 50px; border-bottom-left-radius: 50px; }
     .period-selector .btn-group > .btn:last-child { border-top-right-radius: 50px; border-bottom-right-radius: 50px; }
-
-    .period-selector .btn-outline-secondary.active {
-        background-color: var(--secondary-color);
-        color: white;
-        border-color: var(--secondary-color);
-        box-shadow: none;
+    .period-selector .btn.active {
+        background: var(--primary-color);
+        color: var(--white-color);
+        box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
     }
     .period-selector .btn:hover, .period-selector .btn:focus {
-        background-color: var(--secondary-light);
+        background: var(--primary-hover);
+        color: var(--white-color);
+    }
+
+    .summary-card {
+        border-radius: 12px;
+        box-shadow: 0 6px 16px var(--shadow-color);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        overflow: hidden;
+        height: 100%;
+        animation: fadeInUp 0.6s ease-out;
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
+    }
+    .summary-card.bg-success { background: linear-gradient(135deg, var(--success-color) 0%, #157347 100%); }
+    .summary-card.bg-danger { background: linear-gradient(135deg, var(--danger-color) 0%, #b02a37 100%); }
+
+    .summary-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+    }
+
+    .summary-card .card-header {
+        padding: 1rem 1.25rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid rgba(255,255,255,0.2);
+        background: rgba(0,0,0,0.05);
+        color: var(--white-color);
+    }
+    .summary-card .card-header h5 {
+        font-size: 1.15rem;
+        margin: 0;
+    }
+    .summary-card .card-header i {
+        font-size: 1.2rem;
+    }
+
+    .summary-card .card-body {
+        padding: 1.5rem;
+        color: var(--white-color);
+    }
+    .summary-card .card-body h2 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        line-height: 1.2;
+    }
+
+    .summary-status {
+        font-size: 0.95rem;
+        font-weight: 600;
+        padding: 0.25rem 0.75rem;
+        border-radius: 12px;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: rgba(255,255,255,0.15);
+        transition: background 0.2s ease;
+    }
+    .summary-status.text-success {
+        color: var(--white-color);
+        background: rgba(40,167,69,0.3);
+        text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    }
+    .summary-status.text-danger {
+        color: var(--danger-highlight);
+        background: rgba(220,53,69,0.2);
+        text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    }
+    .summary-status.text-muted {
+        color: #e2e3e5;
+        background: rgba(108,117,125,0.2);
+        text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    }
+    .summary-status i {
+        font-size: 1rem;
+    }
+
+    .summary-card .progress {
+        height: 10px;
+        background: rgba(0,0,0,0.2);
+        border-radius: 5px;
+        overflow: hidden;
+    }
+    .summary-card .progress-bar {
+        background: linear-gradient(90deg, rgba(255,255,255,0.8), rgba(255,255,255,0.4));
+        transition: width 1s ease-in-out;
+    }
+
+    .card {
+        border-radius: 12px;
+        box-shadow: 0 6px 16px var(--shadow-color);
+        animation: fadeInUp 0.7s ease-out;
+        background: var(--white-color);
+    }
+    .card-header {
+        background: var(--white-color);
+        border-bottom: 1px solid var(--border-color);
+        padding: 1rem 1.25rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .card-header h5 {
+        font-size: 1.15rem;
+        font-weight: 600;
         color: var(--text-color);
-        border-color: var(--secondary-color);
-        z-index: 1;
+        margin: 0;
+    }
+    .card-header h5 i {
+        color: var(--primary-color);
+        margin-right: 0.5rem;
     }
 
     .chart-container {
         position: relative;
-        height: 300px;
+        height: 320px;
         width: 100%;
         display: flex;
         align-items: center;
         justify-content: center;
+        padding: 1rem;
     }
     .chart-container canvas {
         max-width: 100%;
@@ -155,112 +219,149 @@
     }
     .chart-no-data-message {
         position: absolute;
-        top: 0; left: 0; right: 0; bottom: 0;
-        background-color: var(--secondary-light);
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: var(--secondary-light);
+        border-radius: 8px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 2rem;
+        color: var(--text-muted);
+        z-index: 10;
+        opacity: 0;
+        transition: opacity 0.5s ease;
+    }
+    .chart-no-data-message.show {
+        opacity: 1;
+    }
+    .chart-no-data-message i {
+        font-size: 2.5rem;
+        color: var(--secondary-color);
+        margin-bottom: 1rem;
+    }
+    .chart-loading {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(255,255,255,0.9);
         border-radius: 8px;
         display: flex;
         align-items: center;
         justify-content: center;
-        text-align: center;
-        padding: 1rem;
-        color: var(--text-muted);
-        z-index: 10;
+        z-index: 11;
     }
-    .chart-no-data-message i {
-        margin-right: 0.5rem;
+    .spinner-border {
+        color: var(--primary-color);
     }
 
-    .card .table {
-        margin-bottom: 0;
+    .table {
+        margin: 0;
     }
-    .card .table th {
+    .table th {
         font-weight: 600;
-        background-color: var(--secondary-light);
-        border-bottom: 1px solid var(--border-color, #dee2e6);
-        vertical-align: middle;
+        background: var(--secondary-light);
+        border-bottom: 1px solid var(--border-color);
+        padding: 1rem;
+        color: var(--text-color);
     }
-    .card .table td {
+    .table td {
+        padding: 1rem;
         vertical-align: middle;
-        padding: 0.75rem 1rem;
+        color: var(--text-color);
     }
+    .table tbody tr:nth-child(odd) {
+        background: rgba(248,249,250,0.5);
+    }
+    .table tbody tr:hover {
+        background: var(--primary-light);
+    }
+
     .category-expenses-table .badge {
-        min-width: 12px; min-height: 12px;
-        display: inline-block;
-        flex-shrink: 0;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
         border: 1px solid rgba(0,0,0,0.1);
     }
     .category-expenses-table .d-flex.align-items-center {
-        gap: 0.5rem;
+        gap: 0.75rem;
     }
+
     .recent-transactions-table .badge {
-        font-weight: 400;
-        padding: 0.3em 0.6em;
-        border-radius: 4px;
-        border: 1px solid var(--border-color, #dee2e6);
+        font-weight: 500;
+        padding: 0.4rem 0.8rem;
+        border-radius: 6px;
+        background: var(--secondary-light);
+        color: var(--text-color);
+        border: 1px solid var(--border-color);
     }
     .recent-transactions-table .btn-group-sm .btn {
-        padding: 0.25rem 0.5rem;
-        font-size: 0.875rem;
+        padding: 0.3rem 0.6rem;
+        font-size: 0.9rem;
+        border-radius: 6px;
     }
-
-    .alert-list .list-group-item {
-        border-left: 4px solid transparent;
-        transition: border-color 0.3s ease;
-        padding: 1rem 1.25rem;
+    .recent-transactions-table .btn-outline-secondary {
+        color: var(--secondary-color);
+        border-color: var(--border-color);
     }
-    .alert-list .list-group-item h6 {
-        font-size: 1rem;
-        font-weight: 600;
+    .recent-transactions-table .btn-outline-secondary:hover {
+        background: var(--primary-light);
+        color: var(--primary-color);
     }
-    .alert-list .list-group-item p {
-        font-size: 0.85rem;
-        margin-bottom: 0;
+    .recent-transactions-table .btn-outline-danger:hover {
+        background: var(--danger-highlight);
+        color: var(--danger-color);
     }
-    .alert-list .list-group-item .badge.bg-warning ~ div { border-left-color: var(--warning-color); }
-    .alert-list .list-group-item .badge.bg-info ~ div { border-left-color: var(--info-color); }
-    .alert-list .list-group-item .badge.bg-success ~ div { border-left-color: var(--primary-color); }
 
     @media (max-width: 992px) {
-        .col-lg-8, .col-lg-4, .col-lg-6 {
+        .col-lg-8, .col-lg-4, .col-lg-6, .col-md-4 {
             margin-bottom: 1.5rem;
         }
+        .chart-container { height: 280px; }
+        .summary-card .card-body h2 { font-size: 2rem; }
+        .period-selector .btn-group { width: 100%; }
+        .period-selector .btn { flex-grow: 1; }
     }
     @media (max-width: 768px) {
         .dashboard-header {
             flex-direction: column;
             align-items: flex-start;
-            gap: 0.5rem;
+            gap: 1rem;
         }
-        .dashboard-header .period-selector,
-        .dashboard-header .btn-group {
-            width: 100%;
+        .dashboard-header h1 {
+            font-size: 1.7rem;
         }
-        .dashboard-header .btn {
-            flex-grow: 1;
-            text-align: center;
-        }
-        .card-body { padding: 1rem; }
-        .summary-card .card-body h2 { font-size: 1.6rem; }
-        .summary-status { font-size: 0.8rem; }
-        .chart-container { height: 200px; }
-        .card .table td { padding: 0.5rem 0.75rem; }
+        .summary-card .card-body h2 { font-size: 1.8rem; }
+        .summary-status { font-size: 0.9rem; }
+        .chart-container { height: 240px; }
+        .table td, .table th { padding: 0.75rem; font-size: 0.95rem; }
+        .card-header h5 { font-size: 1.1rem; }
     }
     @media (max-width: 576px) {
-        .summary-card .card-body h2 { font-size: 1.4rem; }
-        .summary-status { font-size: 0.75rem; }
+        .dashboard-header h1 { font-size: 1.5rem; }
+        .summary-card .card-body h2 { font-size: 1.6rem; }
+        .summary-status { font-size: 0.85rem; }
+        .chart-container { height: 200px; }
+        .table td, .table th { font-size: 0.9rem; padding: 0.5rem; }
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-    <div class="dashboard-header mb-4">
-        <h1><i class="fas fa-chart-line me-3 opacity-75"></i>Dashboard Financeiro</h1>
+<div class="container-fluid">
+    <div class="dashboard-header">
+        <h1 aria-label="Dashboard Financeiro"><i class="fas fa-chart-line"></i> Dashboard Financeiro</h1>
         <div class="period-selector" role="group" aria-label="Filtrar por período">
             <div class="btn-group">
-                <button type="button" class="btn btn-outline-secondary {% if period == 'month' %}active{% endif %}" data-period="month">Mês Atual</button>
-                <button type="button" class="btn btn-outline-secondary {% if period == 'quarter' %}active{% endif %}" data-period="quarter">Trimestre</button>
-                <button type="button" class="btn btn-outline-secondary {% if period == 'year' %}active{% endif %}" data-period="year">Ano</button>
+                <button type="button" class="btn btn-outline-secondary {% if period == 'month' %}active{% endif %}" data-period="month" aria-pressed="{% if period == 'month' %}true{% else %}false{% endif %}">Mês Atual</button>
+                <button type="button" class="btn btn-outline-secondary {% if period == 'quarter' %}active{% endif %}" data-period="quarter" aria-pressed="{% if period == 'quarter' %}true{% else %}false{% endif %}">Trimestre</button>
+                <button type="button" class="btn btn-outline-secondary {% if period == 'year' %}active{% endif %}" data-period="year" aria-pressed="{% if period == 'year' %}true{% else %}false{% endif %}">Ano</button>
             </div>
         </div>
     </div>
@@ -272,7 +373,7 @@
                     <span><i class="fas fa-wallet me-2"></i> Saldo Total</span>
                 </div>
                 <div class="card-body">
-                    <h2 class="card-title mb-1">R$ {{ saldo|floatformat:2|default:"0.00" }}</h2>
+                    <h2 class="card-title">R$ {{ saldo|floatformat:2|default:"0.00" }}</h2>
                     {% if saldo > 0 %}
                         <p class="summary-status text-success"><i class="fas fa-arrow-up"></i> Positivo</p>
                     {% elif saldo < 0 %}
@@ -290,11 +391,11 @@
                     <span><i class="fas fa-arrow-down me-2"></i> Receitas</span>
                 </div>
                 <div class="card-body">
-                    <h2 class="card-title mb-1">R$ {{ receitas|floatformat:2|default:"0.00" }}</h2>
-                    <div class="progress mt-3" style="height: 8px;">
-                        <div class="progress-bar bg-light" role="progressbar" style="width: {{ receitas_percentual|default:0 }}%" aria-valuenow="{{ receitas_percentual|default:0 }}" aria-valuemin="0" aria-valuemax="100"></div>
+                    <h2 class="card-title">R$ {{ receitas|floatformat:2|default:"0.00" }}</h2>
+                    <div class="progress mt-3">
+                        <div class="progress-bar" role="progressbar" id="receitasProgressBar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
                     </div>
-                    <p class="summary-status text-light mt-2"><i class="fas fa-exchange-alt"></i> {{ receitas_count }} transações no período</p>
+                    <p class="summary-status text-light mt-2"><i class="fas fa-exchange-alt"></i> {{ receitas_count }} transações</p>
                 </div>
             </div>
         </div>
@@ -305,25 +406,45 @@
                     <span><i class="fas fa-arrow-up me-2"></i> Despesas</span>
                 </div>
                 <div class="card-body">
-                    <h2 class="card-title mb-1">R$ {{ despesas|floatformat:2|default:"0.00" }}</h2>
-                    <div class="progress mt-3" style="height: 8px;">
-                        <div class="progress-bar bg-light" role="progressbar" style="width: {{ despesas_percentual|default:0 }}%" aria-valuenow="{{ despesas_percentual|default:0 }}" aria-valuemin="0" aria-valuemax="100"></div>
+                    <h2 class="card-title">R$ {{ despesas|floatformat:2|default:"0.00" }}</h2>
+                    <div class="progress mt-3">
+                        <div class="progress-bar" role="progressbar" id="despesasProgressBar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
                     </div>
-                    <p class="summary-status text-light mt-2"><i class="fas fa-exchange-alt"></i> {{ despesas_count }} transações no período</p>
+                    <p class="summary-status text-light mt-2"><i class="fas fa-exchange-alt"></i> {{ despesas_count }} transações</p>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Gráfico comparativo Mês Atual x Mês Anterior -->
     <div class="row mb-4">
         <div class="col-12">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-header bg-white border-bottom d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0"><i class="fas fa-chart-bar me-2 text-primary"></i>Comparativo Mês Atual x Mês Anterior</h5>
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5><i class="fas fa-chart-bar me-2"></i> Comparativo Financeiro</h5>
                 </div>
                 <div class="card-body">
-                    <canvas id="comparativoChart" height="200"></canvas>
+                    <div class="chart-container">
+                        <canvas id="comparativoChart"></canvas>
+                        <script type="application/json" id="comparativo-chart-data">
+                            {
+                                "labels": ["Receitas", "Despesas"],
+                                "currentMonthData": [{{ comparativo_mes_atual_receitas|floatformat:2|default:0 }}, {{ comparativo_mes_atual_despesas|floatformat:2|default:0 }}],
+                                "previousMonthData": [{{ comparativo_mes_anterior_receitas|floatformat:2|default:0 }}, {{ comparativo_mes_anterior_despesas|floatformat:2|default:0 }}]
+                            }
+                        </script>
+                        {% if comparativo_mes_atual_receitas|default:0 == 0 and comparativo_mes_atual_despesas|default:0 == 0 and comparativo_mes_anterior_receitas|default:0 == 0 and comparativo_mes_anterior_despesas|default:0 == 0 %}
+                            <div class="chart-no-data-message">
+                                <i class="fas fa-info-circle"></i>
+                                <p class="mb-0">Sem dados para o comparativo. Adicione transações!</p>
+                            </div>
+                        {% else %}
+                            <div class="chart-loading" id="comparativoChartLoading">
+                                <div class="spinner-border" role="status">
+                                    <span class="visually-hidden">Carregando...</span>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
         </div>
@@ -331,16 +452,26 @@
 
     <div class="row mb-4">
         <div class="col-lg-8 mb-4 mb-lg-0">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-header bg-white border-bottom d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0"><i class="fas fa-chart-line me-2 text-primary"></i>Fluxo Mensal (Últimos 12 Meses)</h5>
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5><i class="fas fa-chart-line me-2"></i> Fluxo Mensal (Últimos 12 Meses)</h5>
                 </div>
                 <div class="card-body">
                     <div class="chart-container">
                         <canvas id="monthlyFlowChart"></canvas>
-                        {% if not chart_flow_labels %}
+                        <script type="application/json" id="monthly-flow-labels">{{ chart_flow_labels_json|safe|default:"[]" }}</script>
+                        <script type="application/json" id="monthly-flow-receitas-data">{{ chart_flow_receitas_data_json|safe|default:"[]" }}</script>
+                        <script type="application/json" id="monthly-flow-despesas-data">{{ chart_flow_despesas_data_json|safe|default:"[]" }}</script>
+                        {% if not chart_flow_labels_json or "[]" in chart_flow_labels_json %}
                             <div class="chart-no-data-message">
-                                <p class="text-muted mb-0"><i class="fas fa-info-circle me-2"></i>Não há dados de transações suficientes nos últimos 12 meses para o gráfico de fluxo.</p>
+                                <i class="fas fa-info-circle"></i>
+                                <p class="mb-0">Sem dados de transações nos últimos 12 meses.</p>
+                            </div>
+                        {% else %}
+                            <div class="chart-loading" id="monthlyFlowChartLoading">
+                                <div class="spinner-border" role="status">
+                                    <span class="visually-hidden">Carregando...</span>
+                                </div>
                             </div>
                         {% endif %}
                     </div>
@@ -349,35 +480,25 @@
         </div>
 
         <div class="col-lg-4">
-            <div class="card border-0 shadow-sm h-100 alert-list">
-                <div class="card-header bg-white border-bottom">
-                    <h5 class="mb-0"><i class="fas fa-bell me-2 text-warning"></i>Alertas</h5>
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5><i class="fas fa-bell me-2"></i> Alertas</h5>
                 </div>
-                <div class="card-body p-0">
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <div>
-                                <h6 class="mb-1">Limite de gastos</h6>
-                                <p class="small text-muted mb-0">Você atingiu 85% do seu limite mensal</p>
-                            </div>
-                            <span class="badge bg-warning rounded-pill">Atenção</span>
-                        </li>
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <div>
-                                <h6 class="mb-1">Assinatura renovando</h6>
-                                <p class="small text-muted mb-0">Netflix em 3 dias - R$ 39,90</p>
-                            </div>
-                            <span class="badge bg-info rounded-pill">Aviso</span>
-                        </li>
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <div>
-                                <h6 class="mb-1">Meta alcançada</h6>
-                                <p class="small text-muted mb-0">Você economizou 100% da meta deste mês</p>
-                            </div>
-                            <span class="badge bg-success rounded-pill">Sucesso</span>
-                        </li>
-                        <li class="list-group-item text-center text-muted py-4">Nenhum novo alerta.</li>
-                    </ul>
+                <div class="card-body">
+                    {% if custom_alerts %}
+                        <ul class="list-group list-group-flush">
+                            {% for alert in custom_alerts %}
+                                <li class="list-group-item alert-item-{{ alert.type }}">
+                                    <p class="mb-0">{{ alert.message | safe }}</p>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <div class="text-center">
+                            <i class="fas fa-check-circle mb-2" style="font-size: 2rem; color: var(--primary-color);"></i>
+                            <p class="mb-0 text-muted">Nenhum alerta no momento.</p>
+                        </div>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -385,15 +506,15 @@
 
     <div class="row mb-4">
         <div class="col-lg-6 mb-4 mb-lg-0">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-header bg-white border-bottom d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0"><i class="fas fa-tags me-2 text-success"></i>Despesas por Categoria (Período)</h5>
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5><i class="fas fa-tags me-2"></i> Despesas por Categoria</h5>
                     <a href="{% url 'lista_categorias' %}" class="btn btn-sm btn-outline-primary">Ver todas</a>
                 </div>
-                <div class="card-body">
+                <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table class="table table-hover mb-0 category-expenses-table">
-                            <thead class="table-light">
+                        <table class="table category-expenses-table">
+                            <thead>
                                 <tr>
                                     <th>Categoria</th>
                                     <th class="text-end">Total (R$)</th>
@@ -402,22 +523,22 @@
                             </thead>
                             <tbody>
                                 {% for item in despesas_por_categoria %}
-                                <tr>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <span class="badge bg-primary rounded-circle me-2" style="width: 12px; height: 12px;"></span>
-                                            {{ item.categoria }}
-                                        </div>
-                                    </td>
-                                    <td class="text-end">R$ {{ item.total|floatformat:2|default:"0.00" }}</td>
-                                    <td class="text-end">{{ item.percentual|floatformat:1|default:"0.0" }}%</td>
-                                </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <span class="badge" style="background-color: {% if item.color %}{{ item.color }}{% else %}var(--primary-color){% endif %};"></span>
+                                                {{ item.categoria }}
+                                            </div>
+                                        </td>
+                                        <td class="text-end">R$ {{ item.total|floatformat:2|default:"0.00" }}</td>
+                                        <td class="text-end">{{ item.percentual|floatformat:1|default:"0.0" }}%</td>
+                                    </tr>
                                 {% empty %}
-                                <tr>
-                                    <td colspan="3" class="text-center py-4 text-muted">
-                                        Nenhuma despesa registrada neste período
-                                    </td>
-                                </tr>
+                                    <tr>
+                                        <td colspan="3" class="text-center py-4 text-muted">
+                                            <i class="fas fa-info-circle me-2"></i>Nenhuma despesa registrada.
+                                        </td>
+                                    </tr>
                                 {% endfor %}
                             </tbody>
                         </table>
@@ -427,17 +548,26 @@
         </div>
 
         <div class="col-lg-6">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-header bg-white border-bottom d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0"><i class="fas fa-chart-pie me-2 text-info"></i>Distribuição de Despesas (Período)</h5>
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5><i class="fas fa-chart-pie me-2"></i> Distribuição de Despesas</h5>
                 </div>
                 <div class="card-body">
                     <div class="chart-container">
                         <canvas id="categoryDistributionChart"></canvas>
-                        {% if not chart_despesas_categoria_labels %}
-                        <div class="chart-no-data-message">
-                            <p class="text-muted mb-0"><i class="fas fa-info-circle me-2"></i>Não há dados de despesas neste período para o gráfico de distribuição.</p>
-                        </div>
+                        <script type="application/json" id="category-distribution-labels">{{ chart_despesas_categoria_labels_json|safe|default:"[]" }}</script>
+                        <script type="application/json" id="category-distribution-data">{{ chart_despesas_data_json|safe|default:"[]" }}</script>
+                        {% if not despesas_por_categoria or despesas_por_categoria|length == 0 or "[]" in chart_despesas_data_json %}
+                            <div class="chart-no-data-message">
+                                <i class="fas fa-info-circle"></i>
+                                <p class="mb-0">Sem dados de despesas para este período.</p>
+                            </div>
+                        {% else %}
+                            <div class="chart-loading" id="categoryDistributionChartLoading">
+                                <div class="spinner-border" role="status">
+                                    <span class="visually-hidden">Carregando...</span>
+                                </div>
+                            </div>
                         {% endif %}
                     </div>
                 </div>
@@ -445,49 +575,51 @@
         </div>
     </div>
 
-    <div class="row mt-4 mb-4">
+    <div class="row mb-4">
         <div class="col-12">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white border-bottom d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0"><i class="fas fa-exchange-alt me-2 text-secondary"></i>Últimas Transações</h5>
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5><i class="fas fa-exchange-alt me-2"></i> Últimas Transações</h5>
                     <a href="{% url 'lista_transacoes' %}" class="btn btn-sm btn-outline-primary">Ver todas</a>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table class="table table-hover mb-0 recent-transactions-table">
-                            <thead class="table-light">
+                        <table class="table recent-transactions-table">
+                            <thead>
                                 <tr>
                                     <th>Data</th>
                                     <th>Descrição</th>
                                     <th>Categoria</th>
                                     <th class="text-end">Valor (R$)</th>
-                                    <th class="text-end" style="width: 120px;">Ações</th>
+                                    <th class="text-end">Ações</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {% for transacao in ultimas_transacoes %}
-                                <tr>
-                                    <td>{{ transacao.data|date:"d/m/Y" }}</td>
-                                    <td>{{ transacao.descricao }}</td>
-                                    <td><span class="badge bg-light text-dark border">{{ transacao.categoria|default:"N/A" }}</span></td>
-                                    <td class="text-end {% if transacao.tipo == 'Despesa' %}text-danger{% else %}text-success{% endif %}">
-                                        R$ {{ transacao.valor|floatformat:2|default:"0.00" }}
-                                    </td>
-                                    <td class="text-end">
-                                        <div class="btn-group btn-group-sm" role="group">
-                                            <a href="{% url 'editar_transacao' transacao.pk %}" class="btn btn-outline-secondary" data-bs-toggle="tooltip" title="Editar">
-                                                <i class="fas fa-edit"></i>
-                                            </a>
-                                            <a href="{% url 'deletar_transacao' transacao.pk %}" class="btn btn-outline-danger" data-bs-toggle="tooltip" title="Excluir" onclick="return confirm('Tem certeza que deseja excluir a transação \'{{ transacao.descricao|escapejs }}\'?');">
-                                                <i class="fas fa-trash"></i>
-                                            </a>
-                                        </div>
-                                    </td>
-                                </tr>
+                                    <tr>
+                                        <td>{{ transacao.data|date:"d/m/Y" }}</td>
+                                        <td>{{ transacao.descricao }}</td>
+                                        <td><span class="badge">{{ transacao.categoria.nome|default:"N/A" }}</span></td>
+                                        <td class="text-end {% if transacao.tipo == 'Despesa' %}text-danger{% else %}text-success{% endif %}">
+                                            R$ {{ transacao.valor|floatformat:2|default:"0.00" }}
+                                        </td>
+                                        <td class="text-end">
+                                            <div class="btn-group btn-group-sm" role="group">
+                                                <a href="{% url 'editar_transacao' transacao.pk %}" class="btn btn-outline-primary" data-bs-toggle="tooltip" title="Editar" aria-label="Editar transação">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                <a href="{% url 'deletar_transacao' transacao.pk %}" class="btn btn-outline-danger" data-bs-toggle="tooltip" title="Excluir" aria-label="Excluir transação" onclick="return confirm('Tem certeza que deseja excluir a transação \'{{ transacao.descricao|escapejs }}\'?');">
+                                                    <i class="fas fa-trash"></i>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
                                 {% empty %}
-                                <tr>
-                                    <td colspan="5" class="text-center py-4 text-muted">Nenhuma transação recente registrada</td>
-                                </tr>
+                                    <tr>
+                                        <td colspan="5" class="text-center py-4 text-muted">
+                                            <i class="fas fa-info-circle me-2"></i>Nenhuma transação recente registrada.
+                                        </td>
+                                    </tr>
                                 {% endfor %}
                             </tbody>
                         </table>
@@ -500,205 +632,361 @@
 {% endblock %}
 
 {% block extra_js %}
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js" crossorigin="anonymous"></script>
+
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-    tooltipTriggerList.map(function (tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl);
-    });
+    Chart.register(ChartDataLabels);
 
-    const periodButtons = document.querySelectorAll('.period-selector .btn');
-    const currentUrl = new URL(window.location.href);
+    Chart.defaults.font.family = 'Poppins';
+    Chart.defaults.font.size = 14;
+    Chart.defaults.font.weight = 500;
 
-    periodButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const selectedPeriod = this.dataset.period;
-            currentUrl.searchParams.set('period', selectedPeriod);
-            window.location.href = currentUrl.toString();
+    document.addEventListener('DOMContentLoaded', () => {
+        // Tooltips
+        document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => new bootstrap.Tooltip(el));
+
+        // Period Selector
+        const periodButtons = document.querySelectorAll('.period-selector .btn');
+        const currentUrl = new URL(window.location.href);
+
+        periodButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                currentUrl.searchParams.set('period', button.dataset.period);
+                window.location.href = currentUrl;
+            });
         });
-    });
 
-    function getChartData(scriptId) {
-        const scriptElement = document.getElementById(scriptId);
-        if (scriptElement && scriptElement.textContent) {
-            try {
-                return JSON.parse(scriptElement.textContent);
-            } catch (e) {
-                console.error(`Erro ao parsear JSON do script #${scriptId}:`, e);
-                return null;
+        // Get Chart Data
+        function getChartData(scriptId) {
+            const script = document.getElementById(scriptId);
+            if (script && script.textContent.trim()) {
+                try {
+                    const data = JSON.parse(script.textContent);
+                    return Array.isArray(data) && data.length === 0 ? null : data;
+                } catch (e) {
+                    console.error(`Error parsing JSON for ${scriptId}:`, e);
+                    return null;
+                }
+            }
+            return null;
+        }
+
+        // Progress Bars
+        const receitasTotal = parseFloat('{{ receitas|default:0 }}');
+        const despesasTotal = parseFloat('{{ despesas|default:0 }}');
+        const totalMovimentado = receitasTotal + despesasTotal;
+
+        if (totalMovimentado > 0) {
+            const receitasPercent = (receitasTotal / totalMovimentado) * 100;
+            const despesasPercent = (despesasTotal / totalMovimentado) * 100;
+
+            const receitasProgressBar = document.getElementById('receitasProgressBar');
+            const despesasProgressBar = document.getElementById('despesasProgressBar');
+
+            if (receitasProgressBar) {
+                receitasProgressBar.style.width = `${receitasPercent}%`;
+                receitasProgressBar.setAttribute('aria-valuenow', receitasPercent.toFixed(0));
+            }
+            if (despesasProgressBar) {
+                despesasProgressBar.style.width = `${despesasPercent}%`;
+                despesasProgressBar.setAttribute('aria-valuenow', despesasPercent.toFixed(0));
             }
         }
-        return null;
-    }
 
-    const monthlyFlowLabels = getChartData('monthly-flow-labels');
-    const monthlyFlowReceitas = getChartData('monthly-flow-receitas-data');
-    const monthlyFlowDespesas = getChartData('monthly-flow-despesas-data');
-    const monthlyFlowCanvas = document.getElementById('monthlyFlowChart');
+        // Monthly Flow Chart
+        const monthlyFlowLabels = getChartData('monthly-flow-labels');
+        const monthlyFlowReceitas = getChartData('monthly-flow-receitas-data');
+        const monthlyFlowDespesas = getChartData('monthly-flow-despesas-data');
+        const monthlyFlowCanvas = document.getElementById('monthlyFlowChart');
 
-    if (monthlyFlowCanvas && monthlyFlowLabels && monthlyFlowReceitas && monthlyFlowDespesas && monthlyFlowLabels.length > 0) {
-        const noDataMessage = monthlyFlowCanvas.closest('.chart-container').querySelector('.chart-no-data-message');
-        if(noDataMessage) noDataMessage.style.display = 'none';
+        if (monthlyFlowCanvas && monthlyFlowLabels && monthlyFlowReceitas && monthlyFlowDespesas && monthlyFlowLabels.length > 0) {
+            const noDataMessage = monthlyFlowCanvas.closest('.chart-container').querySelector('.chart-no-data-message');
+            const loadingSpinner = document.getElementById('monthlyFlowChartLoading');
+            if (noDataMessage) noDataMessage.classList.remove('show');
+            if (loadingSpinner) loadingSpinner.style.display = 'none';
 
-        new Chart(monthlyFlowCanvas, {
-            type: 'line',
-            data: {
-                labels: monthlyFlowLabels,
-                datasets: [
-                    {
-                        label: 'Receitas',
-                        data: monthlyFlowReceitas,
-                        borderColor: 'rgba(40, 167, 69, 0.8)',
-                        backgroundColor: 'rgba(40, 167, 69, 0.1)',
-                        fill: true,
-                        tension: 0.3,
-                        pointBackgroundColor: '#28a745',
-                        pointBorderColor: '#fff',
-                        pointRadius: 5,
-                        pointHoverRadius: 7
-                    },
-                    {
-                        label: 'Despesas',
-                        data: monthlyFlowDespesas,
-                        borderColor: 'rgba(220, 53, 69, 0.8)',
-                        backgroundColor: 'rgba(220, 53, 69, 0.1)',
-                        fill: true,
-                        tension: 0.3,
-                        pointBackgroundColor: '#dc3545',
-                        pointBorderColor: '#fff',
-                        pointRadius: 5,
-                        pointHoverRadius: 7
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        title: {
-                            display: true,
-                            text: 'Valor (R$)',
-                            color: '#333',
-                            font: { size: 12, weight: 'bold' }
+            new Chart(monthlyFlowCanvas, {
+                type: 'line',
+                data: {
+                    labels: monthlyFlowLabels,
+                    datasets: [
+                        {
+                            label: 'Receitas',
+                            data: monthlyFlowReceitas,
+                            borderColor: '#28a745',
+                            backgroundColor: 'rgba(40,167,69,0.2)',
+                            fill: true,
+                            tension: 0.4,
+                            pointBackgroundColor: '#28a745',
+                            pointBorderColor: '#fff',
+                            pointRadius: 4,
+                            pointHoverRadius: 6
                         },
-                        ticks: {
-                            callback: function(value) {
-                                return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
-                            }
+                        {
+                            label: 'Despesas',
+                            data: monthlyFlowDespesas,
+                            borderColor: '#dc3545',
+                            backgroundColor: 'rgba(220,53,69,0.2)',
+                            fill: true,
+                            tension: 0.4,
+                            pointBackgroundColor: '#dc3545',
+                            pointBorderColor: '#fff',
+                            pointRadius: 4,
+                            pointHoverRadius: 6
                         }
-                    },
-                    x: {
-                        title: {
-                            display: true,
-                            text: 'Mês',
-                            color: '#333',
-                            font: { size: 12, weight: 'bold' }
-                        }
-                    }
+                    ]
                 },
-                plugins: {
-                    tooltip: {
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
                         mode: 'index',
-                        intersect: false,
-                        callbacks: {
-                            label: function(context) {
-                                let label = context.dataset.label || '';
-                                if (label) { label += ': '; }
-                                if (context.raw !== null) {
-                                    label += new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(context.raw);
-                                }
-                                return label;
+                        intersect: false
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Valor (R$)',
+                                color: 'var(--text-color)',
+                                font: { size: 14, weight: '600' }
+                            },
+                            ticks: {
+                                callback: value => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value)
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Mês',
+                                color: 'var(--text-color)',
+                                font: { size: 14, weight: '600' }
                             }
                         }
                     },
-                    legend: {
-                        display: true,
-                        position: 'bottom',
-                        labels: {
-                            usePointStyle: true,
-                            padding: 20,
-                            font: { size: 12 }
-                        }
-                    }
-                },
-                hover: { mode: 'nearest', intersect: true },
-                animation: { duration: 1000, easing: 'easeOutQuart' }
-            }
-        });
-    } else {
-        if (monthlyFlowCanvas) monthlyFlowCanvas.style.display = 'none';
-    }
-
-    const categoryDistributionLabels = getChartData('category-distribution-labels');
-    const categoryDistributionData = getChartData('category-distribution-data');
-    const categoryDistributionCanvas = document.getElementById('categoryDistributionChart');
-
-    const chartColors = [
-        '#28a745', '#ffc107', '#17a2b8', '#dc3545', '#6f42c1', '#20c997', '#fd7e14',
-        '#e83e8c', '#6610f2', '#007bff', '#adb5bd', '#343a40', '#198754', '#6c757d',
-        '#0dcaf0', '#ffc107', '#d63384', '#6f42c1'
-    ];
-
-    if (categoryDistributionCanvas && categoryDistributionLabels && categoryDistributionData && categoryDistributionLabels.length > 0) {
-        const noDataMessage = categoryDistributionCanvas.closest('.chart-container').querySelector('.chart-no-data-message');
-        if(noDataMessage) noDataMessage.style.display = 'none';
-
-        new Chart(categoryDistributionCanvas, {
-            type: 'doughnut',
-            data: {
-                labels: categoryDistributionLabels,
-                datasets: [{
-                    data: categoryDistributionData,
-                    backgroundColor: chartColors.slice(0, categoryDistributionLabels.length),
-                    borderColor: '#fff',
-                    borderWidth: 2
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'right',
-                        align: 'center',
-                        labels: {
-                            usePointStyle: true,
-                            padding: 15,
-                            font: { size: 12 }
+                    plugins: {
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                            callbacks: {
+                                label: context => {
+                                    let label = context.dataset.label || '';
+                                    if (label) label += ': ';
+                                    if (context.raw !== null) {
+                                        label += new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(context.raw);
+                                    }
+                                    return label;
+                                }
+                            }
+                        },
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                usePointStyle: true,
+                                padding: 20,
+                                color: 'var(--text-color)'
+                            }
                         }
                     },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                let label = context.label || '';
-                                if (label) { label += ': '; }
-                                let value = context.raw;
-                                if (value !== null) {
-                                    label += new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
+                    animation: {
+                        duration: 1200,
+                        easing: 'easeOutCubic'
+                    }
+                }
+            });
+        } else {
+            if (monthlyFlowCanvas) monthlyFlowCanvas.style.display = 'none';
+            const noDataMessage = monthlyFlowCanvas.closest('.chart-container').querySelector('.chart-no-data-message');
+            if (noDataMessage) noDataMessage.classList.add('show');
+            const loadingSpinner = document.getElementById('monthlyFlowChartLoading');
+            if (loadingSpinner) loadingSpinner.style.display = 'none';
+        }
+
+        // Category Distribution Chart
+        const categoryLabels = getChartData('category-distribution-labels');
+        const categoryData = getChartData('category-distribution-data');
+        const categoryCanvas = document.getElementById('categoryDistributionChart');
+
+        const chartColors = [
+            '#28a745', '#ffc107', '#0dcaf0', '#dc3545', '#6c757d', '#20c997',
+            '#fd7e14', '#e83e8c', '#6610f2', '#007bff', '#adb5bd', '#343a40'
+        ];
+
+        if (categoryCanvas && categoryLabels && categoryData && categoryLabels.length > 0 && categoryData.length > 0) {
+            const noDataMessage = categoryCanvas.closest('.chart-container').querySelector('.chart-no-data-message');
+            const loadingSpinner = document.getElementById('categoryDistributionChartLoading');
+            if (noDataMessage) noDataMessage.classList.remove('show');
+            if (loadingSpinner) loadingSpinner.style.display = 'none';
+
+            new Chart(categoryCanvas, {
+                type: 'doughnut',
+                data: {
+                    labels: categoryLabels,
+                    datasets: [{
+                        data: categoryData,
+                        backgroundColor: chartColors.slice(0, categoryLabels.length),
+                        borderColor: '#fff',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: {
+                                usePointStyle: true,
+                                padding: 20,
+                                color: 'var(--text-color)'
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: context => {
+                                    let label = context.label || '';
+                                    if (label) label += ': ';
+                                    let value = context.raw;
+                                    if (value !== null) {
+                                        label += new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
+                                    }
+                                    let total = context.dataset.data.reduce((sum, val) => sum + val, 0);
+                                    if (total > 0) {
+                                        let percentage = (value / total * 100).toFixed(1);
+                                        label += ` (${percentage}%)`;
+                                    } else {
+                                        label += ' (0%)';
+                                    }
+                                    return label;
                                 }
+                            }
+                        },
+                        datalabels: {
+                            color: '#fff',
+                            formatter: (value, context) => {
                                 let total = context.dataset.data.reduce((sum, val) => sum + val, 0);
                                 if (total > 0) {
                                     let percentage = (value / total * 100).toFixed(1);
-                                    label += ` (${percentage}%)`;
-                                } else {
-                                    label += ' (0.0%)';
+                                    return percentage + '%';
                                 }
-                                return label;
+                                return '';
+                            },
+                            font: { weight: 'bold', size: 12 }
+                        }
+                    },
+                    cutout: '70%',
+                    animation: {
+                        animateScale: true,
+                        animateRotate: true,
+                        duration: 1200,
+                        easing: 'easeOutCubic'
+                    }
+                }
+            });
+        } else {
+            if (categoryCanvas) categoryCanvas.style.display = 'none';
+            const noDataMessage = categoryCanvas.closest('.chart-container').querySelector('.chart-no-data-message');
+            if (noDataMessage) noDataMessage.classList.add('show');
+            const loadingSpinner = document.getElementById('categoryDistributionChartLoading');
+            if (loadingSpinner) loadingSpinner.style.display = 'none';
+        }
+
+        // Comparativo Chart
+        const comparativoData = getChartData('comparativo-chart-data');
+        const comparativoCanvas = document.getElementById('comparativoChart');
+
+        const hasComparativoData = comparativoData && 
+            (comparativoData.currentMonthData.some(val => val > 0) || 
+             comparativoData.previousMonthData.some(val => val > 0));
+
+        if (comparativoCanvas && comparativoData && hasComparativoData) {
+            const noDataMessage = comparativoCanvas.closest('.chart-container').querySelector('.chart-no-data-message');
+            const loadingSpinner = document.getElementById('comparativoChartLoading');
+            if (noDataMessage) noDataMessage.classList.remove('show');
+            if (loadingSpinner) loadingSpinner.style.display = 'none';
+
+            new Chart(comparativoCanvas, {
+                type: 'bar',
+                data: {
+                    labels: comparativoData.labels,
+                    datasets: [
+                        {
+                            label: 'Mês Atual',
+                            data: comparativoData.currentMonthData,
+                            backgroundColor: ['rgba(40,167,69,0.8)', 'rgba(220,53,69,0.8)'],
+                            borderColor: ['#28a745', '#dc3545'],
+                            borderWidth: 1,
+                            borderRadius: 6
+                        },
+                        {
+                            label: 'Mês Anterior',
+                            data: comparativoData.previousMonthData,
+                            backgroundColor: ['rgba(40,167,69,0.4)', 'rgba(220,53,69,0.4)'],
+                            borderColor: ['#28a745', '#dc3545'],
+                            borderWidth: 1,
+                            borderRadius: 6
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Valor (R$)',
+                                color: 'var(--text-color)',
+                                font: { size: 14, weight: '600' }
+                            },
+                            ticks: {
+                                callback: value => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value)
+                            }
+                        },
+                        x: {
+                            grid: { display: false }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                            callbacks: {
+                                label: context => {
+                                    let label = context.dataset.label || '';
+                                    if (label) label += ': ';
+                                    if (context.raw !== null) {
+                                        label += new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(context.raw);
+                                    }
+                                    return label;
+                                }
+                            }
+                        },
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                usePointStyle: true,
+                                padding: 20,
+                                color: 'var(--text-color)'
                             }
                         }
                     },
-                    title: { display: false }
-                },
-                cutout: '70%',
-                animation: { animateScale: true, animateRotate: true }
-            }
-        });
-    } else {
-        if (categoryDistributionCanvas) categoryDistributionCanvas.style.display = 'none';
-    }
-});
+                    animation: {
+                        duration: 1200,
+                        easing: 'easeOutCubic'
+                    }
+                }
+            });
+        } else {
+            if (comparativoCanvas) comparativoCanvas.style.display = 'none';
+            const noDataMessage = comparativoCanvas.closest('.chart-container').querySelector('.chart-no-data-message');
+            if (noDataMessage) noDataMessage.classList.add('show');
+            const loadingSpinner = document.getElementById('comparativoChartLoading');
+            if (loadingSpinner) loadingSpinner.style.display = 'none';
+        }
+    });
 </script>
 {% endblock %}

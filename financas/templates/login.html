@@ -82,11 +82,11 @@
         /* Efeitos de formas no cabeçalho */
         .card-header::after,
         .card-header::before {
-             content: '';
-             position: absolute;
-             background-color: rgba(255, 255, 255, 0.15); /* Branco transparente */
-             border-radius: 50%; /* Formato circular */
-             z-index: 1; /* Garantir que fiquem abaixo do conteúdo */
+            content: '';
+            position: absolute;
+            background-color: rgba(255, 255, 255, 0.15); /* Branco transparente */
+            border-radius: 50%; /* Formato circular */
+            z-index: 1; /* Garantir que fiquem abaixo do conteúdo */
         }
 
         .card-header::after {
@@ -103,10 +103,10 @@
             height: 120px;
         }
 
-         .card-header > * {
-             position: relative; /* Posicionar conteúdo acima das formas */
-             z-index: 2;
-         }
+        .card-header > * {
+            position: relative; /* Posicionar conteúdo acima das formas */
+            z-index: 2;
+        }
 
 
         .card-body {
@@ -121,11 +121,11 @@
             align-items: center; /* Centralizar verticalmente ícone e texto */
         }
 
-         .form-label i {
-             color: var(--primary-color); /* Cor primária para os ícones nos labels */
-             width: 1.25em; /* Garantir largura consistente para os ícones */
-             text-align: center;
-         }
+        .form-label i {
+            color: var(--primary-color); /* Cor primária para os ícones nos labels */
+            width: 1.25em; /* Garantir largura consistente para os ícones */
+            text-align: center;
+        }
 
 
         .form-control {
@@ -140,21 +140,21 @@
             box-shadow: 0 0 0 0.25rem rgba(40, 167, 69, 0.25); /* Sombra verde suave no foco */
         }
 
-         /* Estilo para o input-group (campo de senha com toggle) */
-         .input-group .form-control {
-             border-top-right-radius: 0; /* Remover arredondamento no lado do botão */
-             border-bottom-right-radius: 0;
-         }
+        /* Estilo para o input-group (campo de senha com toggle) */
+        .input-group .form-control {
+            border-top-right-radius: 0; /* Remover arredondamento no lado do botão */
+            border-bottom-right-radius: 0;
+        }
         .input-group .btn {
             border-top-left-radius: 0; /* Remover arredondamento no lado do input */
             border-bottom-left-radius: 0;
             border-color: var(--medium-gray); /* Borda do botão igual à do input */
             padding: 12px 15px; /* Match input padding */
         }
-         .input-group .btn:hover,
-         .input-group .btn:focus {
-             border-color: var(--primary-color); /* Borda verde no hover/focus */
-         }
+        .input-group .btn:hover,
+        .input-group .btn:focus {
+            border-color: var(--primary-color); /* Borda verde no hover/focus */
+        }
 
 
         .btn-primary {
@@ -174,21 +174,21 @@
             box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3); /* Sombra suave no hover */
         }
 
-         .btn-outline-success {
-             border-radius: 50px; /* Formato "pill" para o botão secundário */
-             padding: 12px; /* Espaçamento interno */
-             font-weight: 600;
-             border-width: 2px; /* Borda mais grossa */
-             color: var(--primary-color); /* Cor do texto */
-             border-color: var(--primary-color); /* Cor da borda */
-             transition: all 0.3s ease;
-         }
-         .btn-outline-success:hover {
-             background-color: var(--primary-color); /* Fundo verde no hover */
-             color: white; /* Texto branco no hover */
-             border-color: var(--primary-color);
-             transform: translateY(-2px); /* Efeito de levantar */
-         }
+        .btn-outline-success {
+            border-radius: 50px; /* Formato "pill" para o botão secundário */
+            padding: 12px; /* Espaçamento interno */
+            font-weight: 600;
+            border-width: 2px; /* Borda mais grossa */
+            color: var(--primary-color); /* Cor do texto */
+            border-color: var(--primary-color); /* Cor da borda */
+            transition: all 0.3s ease;
+        }
+        .btn-outline-success:hover {
+            background-color: var(--primary-color); /* Fundo verde no hover */
+            color: white; /* Texto branco no hover */
+            border-color: var(--primary-color);
+            transform: translateY(-2px); /* Efeito de levantar */
+        }
 
 
         .form-check-input:checked {
@@ -204,10 +204,10 @@
             justify-content: center;
         }
 
-         .security-message i {
-             color: var(--primary-color); /* Cor primária para o ícone de segurança */
-             margin-right: 0.5rem;
-         }
+        .security-message i {
+            color: var(--primary-color); /* Cor primária para o ícone de segurança */
+            margin-right: 0.5rem;
+        }
 
 
         .logo {
@@ -255,20 +255,22 @@
             display: none; /* Escondido por padrão */
         }
 
-         /* Mostrar feedback de erro quando o campo é inválido ou o formulário foi validado */
+        /* Mostrar feedback de erro quando o campo é inválido ou o formulário foi validado */
         .form-control.is-invalid ~ .invalid-feedback {
             display: block;
         }
-         .needs-validation:not(:valid) .form-control:invalid ~ .invalid-feedback {
-            display: block;
-         }
+        /* Esta regra não é mais necessária se o JS gerenciar `is-invalid` corretamente
+           .needs-validation:not(:valid) .form-control:invalid ~ .invalid-feedback {
+               display: block;
+           }
+        */
 
-         /* Ajuste específico para o feedback de erro abaixo do input-group */
+        /* Ajuste específico para o feedback de erro abaixo do input-group */
         .input-group .form-control.is-invalid {
-             border-color: var(--error-color) !important; /* Força a borda vermelha */
+            border-color: var(--error-color) !important; /* Força a borda vermelha */
         }
         .input-group .form-control.is-invalid + .btn {
-             border-color: var(--error-color) !important; /* Força a borda vermelha no botão do input-group */
+            border-color: var(--error-color) !important; /* Força a borda vermelha no botão do input-group */
         }
         .input-group + .invalid-feedback {
             margin-top: 0.25rem; /* Garante espaço abaixo do input-group */
@@ -308,18 +310,18 @@
             .card-header {
                 padding: 1.5rem;
             }
-             .logo {
-                 width: 60px; /* Logo menor em telas pequenas */
-             }
-             h2 {
-                 font-size: 1.5rem; /* Título menor */
-             }
-             .card-header::after {
-                 bottom: -40px; left: -40px; width: 120px; height: 120px;
-             }
-             .card-header::before {
-                 top: -20px; right: -20px; width: 80px; height: 80px;
-             }
+            .logo {
+                width: 60px; /* Logo menor em telas pequenas */
+            }
+            h2 {
+                font-size: 1.5rem; /* Título menor */
+            }
+            .card-header::after {
+                bottom: -40px; left: -40px; width: 120px; height: 120px;
+            }
+            .card-header::before {
+                top: -20px; right: -20px; width: 80px; height: 80px;
+            }
         }
     </style>
 </head>
@@ -340,12 +342,11 @@
 
             {# Corpo do Card com formulário e mensagens #}
             <div class="card-body">
-                <!-- Mensagens de erro não relacionadas a campos -->
                 {% if form.non_field_errors %}
                     {# Alerta de erro customizado #}
                     <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
                         {# Título do erro com ícone #}
-                        <h4 class="alert-heading fs-6"><i class="fas fa-circle-exclamation me-2"></i>Erro de Login</h4> {# Ícone atualizado para Font Awesome 6 %}
+                        <h4 class="alert-heading fs-6"><i class="fas fa-circle-exclamation me-2"></i>Erro de Login</h4> {# Ícone atualizado para Font Awesome 6 #}
                         {% for error in form.non_field_errors %}
                             <p class="mb-0">{{ error }}</p> {# Mensagem de erro individual #}
                         {% endfor %}
@@ -354,21 +355,18 @@
                     </div>
                 {% endif %}
 
-                <!-- Formulário de login -->
                 {# novalidate: desativa validação HTML5 nativa para usar a do Bootstrap/Django #}
                 {# needs-validation: classe Bootstrap para ativação via JS #}
                 <form method="post" novalidate class="needs-validation" id="loginForm">
                     {% csrf_token %} {# Token CSRF do Django - Essencial para segurança #}
 
-                    <!-- Campo de usuário -->
                     <div class="mb-4"> {# Margem inferior maior #}
                         {# Label com ícone e texto #}
                         <label for="{{ form.username.id_for_label }}" class="form-label fw-medium">
                             <i class="fas fa-user me-2 text-primary"></i>Usuário
                         </label>
-                        {# Input group apenas para consistência visual se quiser, mas não estritamente necessário sem o botão #}
                         <div class="input-group">
-                             <input type="text"
+                            <input type="text"
                                    class="form-control form-control-lg {% if form.username.errors %}is-invalid{% endif %}"
                                    id="{{ form.username.id_for_label }}"
                                    name="{{ form.username.html_name }}"
@@ -389,7 +387,6 @@
                         </div>
                     </div>
 
-                    <!-- Campo de senha -->
                     <div class="mb-4"> {# Margem inferior maior #}
                         {# Label com ícone e texto #}
                         <label for="{{ form.password.id_for_label }}" class="form-label fw-medium">
@@ -414,21 +411,20 @@
                                 <i class="fas fa-eye"></i>
                             </button>
                         </div>
-                         {# Feedback de erro específico do campo de senha #}
-                         {# d-block: força a exibição como bloco abaixo do input-group #}
-                         {# animate__animated animate__fadeIn animate__faster: adiciona animação #}
-                         {% for error in form.password.errors %}
+                        {# Feedback de erro específico do campo de senha #}
+                        {# d-block: força a exibição como bloco abaixo do input-group #}
+                        {# animate__animated animate__fadeIn animate__faster: adiciona animação #}
+                        {% for error in form.password.errors %}
                             <div class="invalid-feedback d-block animate__animated animate__fadeIn animate__faster">
                                 <i class="fas fa-circle-exclamation me-1"></i>{{ error }} {# Ícone no erro #}
                             </div>
                         {% endfor %}
-                         {# Feedback de erro padrão para validação HTML5 básica #}
+                        {# Feedback de erro padrão para validação HTML5 básica #}
                         <div class="invalid-feedback">
                              <i class="fas fa-circle-exclamation me-1"></i>Por favor, informe sua senha.
                         </div>
                     </div>
 
-                    <!-- Checkbox Lembrar de mim -->
                     <div class="mb-4">
                         <div class="form-check">
                             {# Checkbox Bootstrap #}
@@ -439,7 +435,6 @@
                         {# <<< Opção "Esqueceu a senha?" removida aqui >>> #}
                     </div>
 
-                    <!-- Botão de Entrar -->
                     {# d-grid: Faz o botão ocupar a largura total #}
                     <div class="d-grid mb-4"> {# Margem inferior para separar do divisor #}
                         {# Botão verde, grande, arredondado, com animação de pulso #}
@@ -449,23 +444,20 @@
                         </button>
                     </div>
 
-                    <!-- Divisor com texto "ou" -->
                     <div class="divider-text">
                         <hr>
                         <div>ou</div>
                     </div>
 
-                    <!-- Botão de Cadastro (Link) -->
                     {# d-grid: Faz o link (estilizado como botão) ocupar a largura total #}
                     <div class="d-grid mt-4"> {# Margem superior para separar do divisor #}
-                         {# Link estilizado como botão outline verde #}
-                         <a href="{% url 'registro' %}" class="btn btn-outline-success btn-lg rounded-pill py-3 fw-bold">
+                        {# Link estilizado como botão outline verde #}
+                        <a href="{% url 'registro' %}" class="btn btn-outline-success btn-lg rounded-pill py-3 fw-bold">
                             <i class="fas fa-user-plus me-2"></i>Criar nova conta
                         </a>
                     </div>
                 </form>
 
-                <!-- Rodapé do Card - Mensagem de segurança -->
                 <div class="text-center mt-4">
                     {# Mensagem com ícone e cor cinza #}
                     <small class="security-message">
@@ -500,12 +492,11 @@
                         const isPassword = passwordInput.type === 'password';
                         passwordInput.type = isPassword ? 'text' : 'password';
 
-                        // Altera a classe do ícone (Font Awesome)
+                        // Altera a classe do ícone (Font Awesome) e o aria-label para acessibilidade
                         if (icon) {
                             icon.classList.toggle('fa-eye', !isPassword); // Se era password, agora é text, mostra eye
                             icon.classList.toggle('fa-eye-slash', isPassword); // Se era password, esconde eye-slash
-                            // Atualiza o aria-label para acessibilidade
-                            this.setAttribute('aria-label', isPassword ? 'Ocultar senha' : 'Mostrar senha');
+                            this.setAttribute('aria-label', isPassword ? 'Mostrar senha' : 'Ocultar senha'); // Ajuste aqui para ser mais descritivo
                         }
                     }
                 }
@@ -517,7 +508,7 @@
         const submitButton = document.getElementById('submitButton');
 
         if (form) {
-             // Adiciona a classe 'was-validated' e animação ao tentar submeter formulário inválido
+            // Adiciona a classe 'was-validated' e animação ao tentar submeter formulário inválido
             form.addEventListener('submit', function(event) {
                 if (!form.checkValidity()) {
                     event.preventDefault(); // Impede o envio
@@ -548,18 +539,18 @@
 
                 } else {
                     // Se o formulário for válido, pode adicionar feedback visual ou desativar o botão antes do envio
-                     // submitButton.classList.add('pulse'); // O botão já tem pulse
-                     // submitButton.disabled = true; // Opcional: desativar botão
-                     // submitButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Entrando...'; // Opcional: Mudar texto para loading
+                    // submitButton.disabled = true; // Opcional: desativar botão
+                    // submitButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Entrando...'; // Opcional: Mudar texto para loading
                 }
             }, false);
 
             // Adiciona/remove classe is-invalid em tempo real ao digitar, após o primeiro submit
             form.addEventListener('input', function(event) {
-                if (form.classList.contains('was-validated')) { // Só valida em tempo real após a primeira tentativa de submit
+                // Só valida em tempo real após a primeira tentativa de submit (quando 'was-validated' é adicionada)
+                if (form.classList.contains('was-validated')) {
                     const input = event.target;
-                     // Garante que é um campo que precisa de validação
-                    if (input.checkValidity) {
+                    // Garante que é um campo que precisa de validação e não é o botão
+                    if (input.checkValidity && (input.tagName === 'INPUT' || input.tagName === 'SELECT' || input.tagName === 'TEXTAREA')) {
                         if (input.checkValidity()) {
                             input.classList.remove('is-invalid');
                         } else {
@@ -570,7 +561,7 @@
             });
         }
 
-         // Animação de fade-in e slide-up no card ao carregar a página
+        // Animação de fade-in e slide-up no card ao carregar a página
         document.addEventListener('DOMContentLoaded', function() {
             const card = document.querySelector('.login-card');
             if (card) {
